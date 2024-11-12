@@ -11,7 +11,7 @@ graph TD
 6 --> Jonatan
 6 --> Alexander
 
-0-- Individuell mapp -->arbetssätt
-arbetssätt-- Gemensam mapp -->4
+0-- Individuell branch -->arbetssätt
+arbetssätt-- main branch -->4
 
 ```
