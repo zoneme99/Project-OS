@@ -7,7 +7,7 @@ graph TD
 4 --> 5[Gruppresentation]
 4 --> 6[Videopresentation]
 6 --> Tobias
-6 --> Adam
+6 --> Adam Teo
 6 --> Jonatan
 6 --> Alexander
 
