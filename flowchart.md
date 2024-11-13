@@ -13,5 +13,7 @@ graph TD
 
 0-- Individuell branch -->arbetssätt
 arbetssätt-- main branch -->4
+0-- 20 November -->Deadline
+Deadline-- 26 November -->4
 
 ```
