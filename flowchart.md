@@ -11,7 +11,9 @@ graph TD
 6 --> Jonatan
 6 --> Alexander
 
-0-- individuell mapp -->arbetssätt
-arbetssätt-- gemensam -->4
+0-- Individuell branch -->ab([Arbetssätt])
+ab([Arbetssätt])-- main branch -->4
+0-- 20 November -->DE([Deadline])
+DE([Deadline])-- 26 November -->4
 
 ```
