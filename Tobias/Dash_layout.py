@@ -2,7 +2,7 @@ import pandas as pd
 import plotly_express as px
 from dash import Dash,html, dcc, dash_table
 from dash.dependencies import Input, Output
-
+import dash_bootstrap_components as dbc
 
 
 df = pd.read_csv("../Tobias/athlete_events.csv")            # Reading in the csv-file(dataset)
@@ -10,13 +10,11 @@ df = pd.read_csv("../Tobias/athlete_events.csv")            # Reading in the csv
 # hungary = df[df["Team"] == "Hungary"]
 
 
-app = Dash(__name__)                                        # Initialize app
+app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])                                        # Initialize app
 
 
 app.layout = [                                              # layout-design
-    html.Div(children = "Project OS", style={"text-align": "center"}),
-    dash_table.DataTable(data=df.to_dict("records"), page_size=10
-    ),
+    html.Div(children = "Project OS", style={"text-align": "center","font-size": "40px", "font-weight": "bold", "color": "#4CAF50"}),
 
     html.Hr(),
     
@@ -28,7 +26,8 @@ app.layout = [                                              # layout-design
             {"label": "Gymnastics", "value": "Gymnastics"},
             {"label": "Age distribution with medals", "value": "Age distribution"}
             ],
-    placeholder="Select a sport",                                                       # Gives dropdown a "default text"
+    placeholder="Select a sport", 
+    style={"width": "45%", "margin": "auto", "padding": "10px"},     # Gives dropdown a "default text"
     
     ),
     dcc.Graph(
@@ -65,16 +64,23 @@ def medal_chart(selection_of_sport):
     return fig
 
 def age_distribution(chosen_sports):                                                        # Function for boxplot, age-distribution and filtering data with groupby.
+    
     filt_df = df[df["Sport"].isin(chosen_sports)]
     age_distribution = filt_df.groupby("Sport")[["Age", "Medal"]].describe()
     age_distribution
 
+    color_map = {
+        "Gold": "#FFD700",   # Gold color hexadecimal
+        "Silver": "#C0C0C0", # Silver color hexadecimal
+        "Bronze": "#CD7F32"  # Bronze color hexadecimal
+    }
     fig = px.box(filt_df, 
                 x="Sport", 
                 y="Age",
                 color="Medal", 
-                title="Age distribution in Weightlifting, Archery and Gymnastics")
-    
+                title="Age distribution in Weightlifting, Archery and Gymnastics",
+                color_discrete_map=color_map,
+                template="plotly")
     
     return fig
 
