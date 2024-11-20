@@ -5,7 +5,7 @@ from dash.dependencies import Input, Output
 import dash_bootstrap_components as dbc
 
 
-df = pd.read_csv("../Tobias/athlete_events.csv")            # Reading in the csv-file(dataset)
+df = pd.read_csv("C:/Code/Project-OS/Tobias/athlete_events.csv")            # Reading in the csv-file(dataset)
 
 # hungary = df[df["Team"] == "Hungary"]
 
@@ -47,7 +47,7 @@ def medal_chart(selection_of_sport):
         return {}
     
     if selection_of_sport == "Age distribution":                                # if age distribution is chosen, generates boxplot.
-        chosen_sports = ["Weightlifting", "Archery", "Gymnastics"]
+        chosen_sports = ["Sailing", "Rowing", "Canoeing"]
         return age_distribution(chosen_sports)
     
     chosen_sport = (df["Sport"] == selection_of_sport) & (df["Medal"].notna())
