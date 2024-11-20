@@ -49,7 +49,7 @@ dropdown = html.Div(
             id="indicator",
             options = [
                 {"label":"Medals","value":"Medals"}, 
-                {"label":"Canoeing-Rowin-Sailing","value":"Canoeing-Rowin-Sailing"}, 
+                {"label":"Median Age","value":"Canoeing-Rowin-Sailing"}, 
             ],
             placeholder = "Select Graph",
             clearable=False
@@ -86,6 +86,10 @@ app.layout = [
     ]
 
 dff = pd.read_csv("C:/Code/Project-OS/Adam/hm.csv")
+
+
+li = "Weightlifting,Archery,Gymnastics".split(",")
+#li = "Canoeing,Rowin,Sailing".split(",")
 @callback(
     Output('example-graph', 'figure'),
     Output('title', 'title'),
@@ -97,7 +101,7 @@ def update_output(indicator, checklist):
     #fig_01 = px.line(test_01.df_new, y=["Rowing", "Canoeing", "Sailing"])
     item={
         "Medals":px.line(dff, y=["Gold", "Silver", "Bronze"], x="Year", color_discrete_sequence=['Gold', 'Silver', 'rgb(217,95,2)']).update_layout(yaxis_title="Number of Medals"),
-        "Canoeing-Rowin-Sailing":px.line(test_02.df_new, y=checklist, range_y=[20,40], range_x=[1948,2016]).update_layout(
+        "Canoeing-Rowin-Sailing":px.line(test_02.df_age_by_year, y=li, range_y=[14,40], range_x=[1948,2016]).update_layout(
         yaxis_title="Age"),}
 
     
