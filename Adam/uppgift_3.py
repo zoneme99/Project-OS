@@ -48,6 +48,7 @@ dropdown = html.Div(
             #options = ["Canoeing-Rowin-Sailing", "Canoeing-Rowing", "Canoeing"],
             id="indicator",
             options = [
+                {"label":"Hungary","value":"Hungary"}, 
                 {"label":"Medals","value":"Medals"}, 
                 {"label":"Median Age","value":"Canoeing-Rowin-Sailing"}, 
             ],
@@ -67,22 +68,14 @@ radio = dcc.Checklist(
 #['Rowing', 'Sailing','Canoeing'], 'Rowning')
 
 app.layout = [ 
-    #alert,
-    header,
-    header_2,
-
-    dropdown,
-    radio,
-    #table,
-    dcc.Graph(
-        id='example-graph',
-        #figure=test_01.fig_01,
-        figure = px.line()
-       
-        #label="Bar Chart"
-    ),
-
-
+        #alert,
+        header,
+        header_2,
+        dropdown,
+        radio,
+        #table,
+        dcc.Graph( id='example-graph', figure = px.line()),
+        #html.Div( id="main_div", children=[dcc.Graph( figure = px.line())], ),
     ]
 
 dff = pd.read_csv("C:/Code/Project-OS/Adam/hm.csv")
@@ -92,6 +85,7 @@ li = "Weightlifting,Archery,Gymnastics".split(",")
 #li = "Canoeing,Rowin,Sailing".split(",")
 @callback(
     Output('example-graph', 'figure'),
+    #Output('main_div', 'children'),
     Output('title', 'title'),
     Input('indicator', 'value'),
     Input('checklist', 'value'),
@@ -99,14 +93,23 @@ li = "Weightlifting,Archery,Gymnastics".split(",")
 )
 def update_output(indicator, checklist):
     #fig_01 = px.line(test_01.df_new, y=["Rowing", "Canoeing", "Sailing"])
+
     item={
+       # "Hungary":header_2,
         "Medals":px.line(dff, y=["Gold", "Silver", "Bronze"], x="Year", color_discrete_sequence=['Gold', 'Silver', 'rgb(217,95,2)']).update_layout(yaxis_title="Number of Medals"),
         "Canoeing-Rowin-Sailing":px.line(test_02.df_age_by_year, y=li, range_y=[14,40], range_x=[1948,2016]).update_layout(
         yaxis_title="Age"),}
-
+   
+    """
+    item={
+        #"Hungary":header_2,
+        "Medals":dcc.Graph(figure = px.line(dff, y=["Gold", "Silver", "Bronze"], x="Year", color_discrete_sequence=['Gold', 'Silver', 'rgb(217,95,2)']).update_layout(yaxis_title="Number of Medals")),
+        "Canoeing-Rowin-Sailing":dcc.Graph( figure = px.line()),
+    }
+    """
+   
     
-    #return px.line(test_01.df_new, y=["Rowing", "Canoeing"])
-    
+    #return item.get(indicator, px.line()), "".join(checklist )
     return item.get(indicator, px.line()), "".join(checklist )
 
 
