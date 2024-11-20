@@ -7,6 +7,9 @@ import adam, alex, jonte, tobbe
 
 app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])                                        # Initialize app
 
+# Imports the select dictionary from each persons file and 
+# extrackts the key and coverts it a lable value pair that 
+# the drop down menu can use
 options_list = list() 
 options_list += [ {"label":key, "value":key} for key in adam.select.keys() ] 
 options_list += [ {"label":key, "value":key} for key in alex.select.keys() ] 
@@ -41,6 +44,8 @@ def medal_chart(selection_of_sport):
     if not selection_of_sport:                                                  # if no choice - show empty graph.
         return {}
     
+    # Imports the select dictionary that contains the 
+    # charts from each persons file
     select = dict()
     select.update(adam.select)
     select.update(alex.select)
