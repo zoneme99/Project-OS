@@ -48,12 +48,14 @@ select={
             
             html.Img( style={ "width":"400px", "height":"247px", "border":"3px solid black", "display":"block"},  src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Flag_of_Hungary.svg" ),
             html.Div(children=[
-                html.H3("Hungary"),
-                html.P("Population: 9.6 million inhabitants"),
-                html.P("Weather: Cold winters and warm summers"),
-                html.P("Best Year in the olympics: 1952 with 102 medals"),
-                html.P("Worst Year in the olympics: 1904 with 4 medals"),
+                html.H3("Hungary", style={"font-size": "30px", "font-weight": "bold"}),
+                html.P("-Population: 9.6 million inhabitants"),
+                html.P("-Weather: Cold winters and warm summers"),
+                html.P("-Best Year in the olympics: 1952 with 102 medals"),
+                html.P("-Worst Year in the olympics: 1904 with 4 medals"),
+                html.P("-Invented BASIC programming-language"),
+                html.P("-Best water-polo team in history of the sport with 15 olympic medals")
             ],
-            style={"max-width": "400px", "line-height": "1.5",})
+            style={"max-width": "400px", "line-height": "1.5", "font-size": "20px"})
             ]),
 } 
