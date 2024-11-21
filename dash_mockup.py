@@ -9,7 +9,10 @@ import jonte
 import tobbe
 
 # Initialize app
-app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
+dbc_css = (
+    "https://cdn.jsdelivr.net/gh/AnnMarieW/dash-bootstrap-templates@V1.0.1/dbc.min.css"
+)
+app = Dash(__name__, external_stylesheets=[dbc.themes.SLATE, dbc_css])
 
 # Imports the select dictionary from each persons file and
 # extrackts the key and coverts it a lable value pair that
@@ -20,55 +23,34 @@ options_list += [{"label": key, "value": key} for key in alex.select.keys()]
 options_list += [{"label": key, "value": key} for key in jonte.select.keys()]
 options_list += [{"label": key, "value": key} for key in tobbe.select.keys()]
 
-app.layout = html.Div(
-    style={
-        'backgroundColor': '#FBE9D1',
-        'height': '100vh',
-        'display': 'flex',
-        'flexDirection': 'column',
-    },
+app.layout = dbc.Container(
     children=[
-        html.Div(
+        dbc.Row(
             children=[
-                html.Div(
-                    "Project OS",
-                    style={
-                        "text-align": "center",
-                        "font-size": "40px",
-                        "font-weight": "bold",
-                        "color": "#444339",
-                    }
+                dbc.Col(
+                    "Project OS"
                 ),
-                html.Hr(),
-                dcc.Dropdown(
+                dbc.Col(
+                    dcc.Dropdown(
                     id="Sport-dropdown",
                     options=options_list,
                     placeholder="Select a sport",
-                    style={
-                        "width": "20vw",
-                        "margin": "auto",
-                        "padding": "0px"
-                    },
-                    value="Medal Distribution For Hungary"
-                ),
+                    value="Medal Distribution For Hungary",
+                    className="dbc"
+                )
+                )
 
-            ],
-            style={
-                'flex': '0 0 auto',
-                'padding': '20px',
-                'backgroundColor': '#F1F0EB'
-            }
-        ),
-        html.Div(
+            ])
+        ,
+        dbc.Row(
             id="Div chart",
             children={},
-            style={
-                'flex': '1 1 auto',
-                'padding': '20px',
-                'backgroundColor': '#F1F0EB'
-            }
+            className="dbc"
+
         )
     ]
+    , fluid=True,
+    className="dbc"
 )
 
 
