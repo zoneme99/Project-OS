@@ -19,6 +19,8 @@ def select_sport(selection_of_sport):
 # the figure= contains the plotly_express chart
 # check the tobbe.py file for further references
 # NOTE You should be able to add any tipe of object like a string, dash_table or another div
+
+
 select={
         "Weightlifting": dcc.Graph( figure=px.bar(
             select_sport("Weightlifting"),
@@ -41,4 +43,17 @@ select={
             color="NOC",
             title= f"Medal overview in Gymnastics"
          )),
-}
+        "Hungary": html.Div(style={"display":"flex", "align-items":"center", "gap":"20px"},
+            children=[
+            
+            html.Img( style={ "width":"400px", "height":"247px", "border":"3px solid black", "display":"block"},  src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Flag_of_Hungary.svg" ),
+            html.Div(children=[
+                html.H3("Hungary"),
+                html.P("Population: 9.6 million inhabitants"),
+                html.P("Weather: Cold winters and warm summers"),
+                html.P("Best Year in the olympics: 1952 with 102 medals"),
+                html.P("Worst Year in the olympics: 1904 with 4 medals"),
+            ],
+            style={"max-width": "400px", "line-height": "1.5",})
+            ]),
+} 
