@@ -1,0 +1,24 @@
+#Sport-dropdown .Select-control {
+  background-color: #efe1ba !important;
+  color: #444339 !important;
+  border: 1px solid #444339 !important;
+  border-radius: 3px !important;
+}
+
+#Sport-dropdown .Select-menu {
+  background-color: #efe1ba !important;
+}
+
+#Sport-dropdown .Select-option {
+  color: #444339 !important;
+}
+
+#Sport-dropdown .Select-option:hover {
+  background-color: #d9d3c7 !important;
+  color: #444339 !important;
+}
+
+#Sport-dropdown .Select-option.is-selected {
+  background-color: #c6bea9 !important;
+  color: #444339 !important;
+}
