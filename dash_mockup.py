@@ -32,17 +32,19 @@ app.layout = [                                              # layout-design
     placeholder="Select a sport", 
     style={"width": "45%", "margin": "auto", "padding": "10px"},     # Gives dropdown a "default text"
     ),
-    dcc.Graph( id="Medal chart", )    
+    #dcc.Graph( id="Medal chart", ),    
+    html.Div( id="Div chart", children = {}  )
 ]
 
 @app.callback(                                                                  # Gives the dashapp input and output, user input linked with app output.
-    Output("Medal chart", "figure"),
+    Output("Div chart", "children"),
     Input("Sport dropdown", "value")
 )
 def medal_chart(selection_of_sport):
 
-    if not selection_of_sport:                                                  # if no choice - show empty graph.
-        return {}
+    if not selection_of_sport:    
+        return {}                                              # if no choice - show empty graph.
+        #return px.bar(title="")
     
     # Imports the select dictionary that contains the 
     # charts from each persons file
@@ -68,7 +70,8 @@ def medal_chart(selection_of_sport):
             title= f"Medal overview in Archery"
          ),
     """
-    return select[selection_of_sport]
+    #return select[selection_of_sport]
+    return (select[selection_of_sport],)
 
 
 
