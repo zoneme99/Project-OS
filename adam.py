@@ -52,6 +52,12 @@ hungary_medals = medals_only( hungary_ume  )
 hungary_medals
 
 
+chart_style = {
+    'border': '2px solid #444339',
+    'border-radius': '6px',
+    'margin': '10px'
+}
+
 # ----------------
 
 # Example Dataframe
@@ -64,9 +70,24 @@ df_info["Year"] = "1896,1900,1904,1908,1912".split(",")
 # while you add the graph to the figure element
 unique_medals = px.line(
     hungary_medals, y=["Gold", "Silver", "Bronze"], 
-    color_discrete_sequence=['Gold', 'Silver', 'Brown']
-    ).update_layout(yaxis_title="Number of Medals")
+    color_discrete_map={"Gold": "#FFD700", "Silver": "#C0C0C0", "Bronze": "#CD7F32"}
+    ).update_layout(yaxis_title="Number of Medals", plot_bgcolor="#EFE1BA", paper_bgcolor="#EFE1BA", font=dict(color="#444339"))
 
+sailing = px.bar(
+    select_sport("Sailing"),
+    x="NOC",
+    y="Medal",
+    color="NOC",
+    title= f"Medal overview in Sailing"
+    ).update_layout( plot_bgcolor="#EFE1BA", paper_bgcolor="#EFE1BA", font=dict(color="#444339"))
+
+canoeing = px.bar(
+    select_sport("Canoeing"),
+    x="NOC",
+    y="Medal",
+    color="NOC",
+    title= f"Medal overview in Canoeing"
+    ).update_layout( plot_bgcolor="#EFE1BA", paper_bgcolor="#EFE1BA", font=dict(color="#444339"))
 
 # Add your completed charts to the select dictionary
 # select={ 
@@ -79,21 +100,9 @@ unique_medals = px.line(
 # NOTE You should be able to add any tipe of object like a string, dash_table or another di
 
 select={
-        "Sailing": dcc.Graph( figure=px.bar(
-            select_sport("Sailing"),
-            x="NOC",
-            y="Medal",
-            color="NOC",
-            title= f"Medal overview in Sailing"
-         )),
-        "Canoeing": dcc.Graph( figure=px.bar(
-            select_sport("Canoeing"),
-            x="NOC",
-            y="Medal",
-            color="NOC",
-            title= f"Medal overview in Canoeing"
-         )),
-         "Unique Medals": dcc.Graph( figure= unique_medals ),
+        "Sailing": dcc.Graph( figure=sailing,style=chart_style ),
+        "Canoeing": dcc.Graph( figure=canoeing, style=chart_style ),
+         "Unique Medals": dcc.Graph( figure=unique_medals, style=chart_style ),
          #Project-OS\olympic_flag_2.png
          #Project-OS\olympic_flag_2.png
          
