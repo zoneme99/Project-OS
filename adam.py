@@ -1,6 +1,7 @@
 import pandas as pd
 import plotly_express as px
 from dash import html, dcc, dash_table
+import dash_bootstrap_components as dbc
 
 # Create your charts here 
 df = pd.read_csv("Data/athlete_events.csv") 
@@ -10,6 +11,9 @@ def select_sport(selection_of_sport):
     medals_by_country = (df[chosen_sport].groupby("NOC")[["Medal"]].count().sort_values(by="Medal",ascending=False).reset_index()) # groups by NOC and counts number of medals, sort values and then resets index.
     return medals_by_country
 
+df_info = pd.DataFrame() 
+df_info["Hosts"] = "Athens,France,USA,UK,Sweden".split(",")
+df_info["Year"] = "1896,1900,1904,1908,1912".split(",")
 # Add your completed charts to the select dictionary
 # select={ 
 #   "chart_name_a": dcc.Graph( figure=px.bar(    )), 
@@ -34,6 +38,13 @@ select={
             color="NOC",
             title= f"Medal overview in Canoeing"
          )),
-         "div_test": html.H1(children="Great Scott"),
+         #Project-OS\olympic_flag_2.png
+         #Project-OS\olympic_flag_2.png
+         
+         "h1_test": html.H1(children="Great Scott"),
+         "div_test": html.Div(children=[
+             html.Img( style={ "width":"400px", "height":"247px", },  src="https://upload.wikimedia.org/wikipedia/commons/a/a7/Olympic_flag.svg" ),
+             dbc.Table.from_dataframe(df_info)
+            ]),
 
 }
