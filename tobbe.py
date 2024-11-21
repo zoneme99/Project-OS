@@ -39,12 +39,14 @@ def age_distribution(chosen_sports):
                  color_discrete_map=color_map,
                  template="plotly")
     return fig
-
+    
 
 
 select={
         "Age distribution": dcc.Graph( figure= age_distribution(["Weightlifting","Archery", "Gymnastics"]
-        )),
+        )), 
+        
+
 
 
         "Hungary": html.Div(style={"display":"flex", "align-items":"center", "gap":"20px"},
@@ -57,9 +59,11 @@ select={
                 html.P("-Weather: Cold winters and warm summers"),
                 html.P("-Best Year in the olympics: 1952 with 102 medals"),
                 html.P("-Worst Year in the olympics: 1904 with 4 medals"),
-                html.P("-Invented BASIC programming-language"),
+                html.P("-Inventor of the Rubik's Cube"),
                 html.P("-Best water-polo team in history of the sport with 15 olympic medals")
             ],
             style={"max-width": "400px", "line-height": "1.5", "font-size": "20px"})
-            ]),
+            ]
+        ), 
+            
 } 
