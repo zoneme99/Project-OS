@@ -90,10 +90,18 @@ hungary_medal_distribution = px.pie(
 
 def sports_medals_overview(unique_medals, country):
     filtered_data = unique_medals[unique_medals["NOC"] == country]
+
     sports_medals = filtered_data.groupby(
         ["Sport", "Medal"]).size().reset_index(name="Count")
-    top_sports = sports_medals.groupby(
-        "Sport")["Count"].sum().nlargest(10).index
+
+    sports_totals = sports_medals.groupby(
+        "Sport")["Count"].sum().reset_index(name="Total")
+
+    sports_medals = sports_medals.merge(sports_totals, on="Sport")
+    sports_medals = sports_medals.sort_values(by="Total", ascending=False)
+
+    top_sports = sports_medals["Sport"].unique()[:10]
+
     return sports_medals[sports_medals["Sport"].isin(top_sports)]
 
 
@@ -105,14 +113,22 @@ hungary_sports_graph = px.bar(
     y="Count",
     color="Medal",
     title="Top 10 Sports Where Hungary Won Medals",
-    color_discrete_map={"Gold": "#FFD700",
-                        "Silver": "#C0C0C0", "Bronze": "#CD7F32"}
-).update_layout(plot_bgcolor="#EFE1BA", paper_bgcolor="#EFE1BA", font=dict(color="#444339"))
-
-df_info = pd.DataFrame()
-df_info["Hosts"] = "Athens,France,USA,UK,Sweden".split(",")
-df_info["Year"] = "1896,1900,1904,1908,1912".split(",")
-
+    color_discrete_map={
+        "Gold": "#FFD700",
+        "Silver": "#C0C0C0",
+        "Bronze": "#CD7F32"
+    },
+).update_layout(
+    plot_bgcolor="#EFE1BA",
+    paper_bgcolor="#EFE1BA",
+    font=dict(color="#444339"),
+    xaxis=dict(
+        categoryorder="array",
+        categoryarray=hungary_sports_overview.sort_values(
+            by="Total", ascending=False
+        )["Sport"].unique()
+    )
+)
 
 select = {
     "Medal Distribution For Hungary": dcc.Graph(
