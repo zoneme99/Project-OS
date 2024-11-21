@@ -19,30 +19,34 @@ def select_sport(selection_of_sport):
 # the figure= contains the plotly_express chart
 # check the tobbe.py file for further references
 # NOTE You should be able to add any tipe of object like a string, dash_table or another div
+def age_distribution(chosen_sports):
+    """
+    Generates a boxplot for the age distribution of athletes across the given sports.
+    """
+    filt_df = df[df["Sport"].isin(chosen_sports)]
+    # Color map for medals
+    color_map = {
+        "Gold": "#FFD700",   # Gold color hexadecimal
+        "Silver": "#C0C0C0", # Silver color hexadecimal
+        "Bronze": "#CD7F32"  # Bronze color hexadecimal
+    }
+    # Create boxplot
+    fig = px.box(filt_df, 
+                 x="Sport", 
+                 y="Age", 
+                 color="Medal", 
+                 title="Age distribution in Weightlifting, Archery, and Gymnastics",
+                 color_discrete_map=color_map,
+                 template="plotly")
+    return fig
+
 
 
 select={
-        "Weightlifting": dcc.Graph( figure=px.bar(
-            select_sport("Weightlifting"),
-            x="NOC",
-            y="Medal",
-            color="NOC",
-            title= f"Medal overview in Weightlifting"
-         )),
-        "Archery": dcc.Graph( figure=px.bar(
-            select_sport("Archery"),
-            x="NOC",
-            y="Medal",
-            color="NOC",
-            title= f"Medal overview in Archery"
-         )),
-        "Gymnastics":dcc.Graph( figure= px.bar(
-            select_sport("Gymnastics"),
-            x="NOC",
-            y="Medal",
-            color="NOC",
-            title= f"Medal overview in Gymnastics"
-         )),
+        "Age distribution": dcc.Graph( figure= age_distribution(["Weightlifting","Archery", "Gymnastics"]
+        )),
+
+
         "Hungary": html.Div(style={"display":"flex", "align-items":"center", "gap":"20px"},
             children=[
             
