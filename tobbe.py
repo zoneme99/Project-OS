@@ -35,7 +35,7 @@ def age_distribution(chosen_sports):
                  x="Sport", 
                  y="Age", 
                  color="Medal", 
-                 title="Age distribution in Weightlifting, Archery, and Gymnastics",
+                 title="Age distribution in Fencing, Water Polo, and Gymnastics",
                  color_discrete_map=color_map,
                  template="plotly")
     return fig
@@ -43,7 +43,7 @@ def age_distribution(chosen_sports):
 
 
 select={
-        "Age distribution": dcc.Graph( figure= age_distribution(["Weightlifting","Archery", "Gymnastics"]
+        "Age distribution": dcc.Graph( figure= age_distribution(["Fencing","Water Polo", "Gymnastics"]
         )), 
         
 
