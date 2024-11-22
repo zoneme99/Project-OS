@@ -60,14 +60,11 @@ df_info["Year"] = "1896,1900,1904,1908,1912".split(",")
 # I stored the px.line in a variable outside the select dict
 # because dash doesn't like that you add .uppdate_layout 
 # while you add the graph to the figure element
-#h1=hungary 
-#h2=hungary
-#h3=hungary
-#hungary_mo = medals_only( unique_medals( h1 )  )
 
+# Medals Per Year
 def medals_per_year( df ):
     return px.line(
-    medals_only( unique_medals( df )  ), 
+    medals_only( unique_medals( df ) ), 
     y=["Gold", "Silver", "Bronze"], 
     color_discrete_map={"Gold": "#FFD700", "Silver": "#C0C0C0", "Bronze": "#CD7F32"}
     ).update_layout(
@@ -96,6 +93,8 @@ medals_per_year_non  = px.line(
     )
 
 
+# Mean Age 
+
 df.sort_values("Year", ascending=False, inplace=True)
 df_age_by_year = pd.DataFrame()
 li = df["Sport"].unique()
@@ -116,7 +115,34 @@ mean_age = px.line(
 
 mean_age
 
+# Medals Ratio
+def medals_ratio( df:"DataFrame", noc:str  )->"DataFrame":
+    df_noc = medals_only( unique_medals( df[df["NOC"]==noc]) )
+    df_all = medals_only( unique_medals( df ) )
+    df_noc["Gold (%)"] = df_noc.apply(lambda x: round(x["Gold"]/df_all.loc[x.name]["Gold"]*100, 1), axis=1) 
+    df_noc["Silver (%)"] = df_noc.apply(lambda x: round(x["Silver"]/df_all.loc[x.name]["Silver"]*100, 1), axis=1) 
+    df_noc["Bronze (%)"] = df_noc.apply(lambda x: round(x["Bronze"]/df_all.loc[x.name]["Bronze"]*100, 1), axis=1) 
+    df_noc["Medals (%)"] = df_noc.apply(lambda x: round((x["Gold"]+x["Silver"]+x["Bronze"])/(df_all.loc[x.name]["Gold"]+df_all.loc[x.name]["Silver"]+df_all.loc[x.name]["Bronze"])*100, 1), axis=1)
+    df_noc["World (%)"] = 100-df_noc["Medals (%)"]
+    return df_noc
 
+hungary_medals = medals_ratio( df, "HUN")
+sweden_medals = medals_ratio( df, "SWE")
+
+hungary_medals
+sweden_medals
+
+medals_per_year_ratio = px.bar( 
+        hungary_medals, y=["Medals (%)","World (%)"],  
+        color_discrete_map={"Medals (%)": "#5f5c4d", "World (%)": "#bcb092"}
+    ).update_layout( 
+        yaxis_title="Maen Age",
+        plot_bgcolor="#EFE1BA",
+        paper_bgcolor="#EFE1BA", 
+        font=dict(color="#444339")
+    )
+
+# Test 
 sailing = px.bar(
     select_sport("Sailing"),
     x="NOC",
@@ -159,6 +185,8 @@ select={
         "Sailing": dcc.Graph( figure=sailing,style=chart_style ),
         "Canoeing": dcc.Graph( figure=canoeing, style=chart_style ),
         "Mean Age": dcc.Graph( figure=mean_age, style=chart_style ),
+
+        "Medals Per Year : Ratio" : dcc.Graph( figure=medals_per_year_ratio, style=chart_style ),
 
         "Medals Per Year : Total": dcc.Graph( figure=medals_per_year_total, style=chart_style ),
         "Medals Per Year : Non-Unique": dcc.Graph( figure=medals_per_year_non, style=chart_style ),
