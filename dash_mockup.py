@@ -74,43 +74,18 @@ app.layout = html.Div(
 )
 
 
-@app.callback(                                                                  # Gives the dashapp input and output, user input linked with app output.
+@app.callback(
     Output("Div chart", "children"),
     Input("Sport-dropdown", "value")
 )
 def medal_chart(selection_of_sport):
 
     if not selection_of_sport:
-        # if no choice - show empty graph.
-        return {}
-        # return px.bar(title="")
+        selection_of_sport = "Hungary Overview"
 
-    # Imports the select dictionary that contains the
-    # charts from each persons file
     select = charts.select
-    # select.update(adam.select)
-    # select.update(alex.select)
-    # select.update(jonte.select)
-    # select.update(tobbe.select)
-    """
-    select={
-        "Weightlifting": px.bar(
-            select_sport("Weightlifting"),
-            x="NOC",
-            y="Medal",
-            color="NOC",
-            title= f"Medal overview in Weightlifting"
-         ),
-        "Archery": px.bar(
-            select_sport("Archery"),
-            x="NOC",
-            y="Medal",
-            color="NOC",
-            title= f"Medal overview in Archery"
-         ),
-    """
-    # return select[selection_of_sport]
-    return (select[selection_of_sport],)
+
+    return select.get(selection_of_sport, html.Div("No chart available"))
 
 
 if __name__ == "__main__":                                  # Runs the app
