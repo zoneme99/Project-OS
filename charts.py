@@ -75,9 +75,31 @@ for sport in li:
 df_age_by_year["Water Polo"] = (
     df_age_by_year["Water Polo"].bfill()+df_age_by_year["Water Polo"].ffill())/2
 # -----
+def select_sport(selection_of_sport):
+    chosen_sport = (df["Sport"] == selection_of_sport) & (df["Medal"].notna())
+    medals_by_country = (df[chosen_sport].groupby("NOC")[["Medal"]].count().sort_values(by="Medal",ascending=False).reset_index()) # groups by NOC and counts number of medals, sort values and then resets index.
+    return medals_by_country
 
+def age_distribution(chosen_sports):
+    filt_df = df[df["Sport"].isin(chosen_sports)]
+    
+    return filt_df
+    
 
 select = {
+     "Age distribution": dcc.Graph(
+                figure= px.box(age_distribution(["Fencing", "Water Polo", "Gymnastics"]), 
+                x="Sport", 
+                y="Age", 
+                color="Medal", 
+                title="Age distribution in Fencing, Water Polo, and Gymnastics",
+                color_discrete_map={"Gold": "#FFD700",
+                                "Silver": "#C0C0C0", "Bronze": "#CD7F32"}
+     ).update_layout(plot_bgcolor="#EFE1BA", paper_bgcolor="#EFE1BA", font=dict(color="#444339")),
+        style=chart_style
+                
+        ), 
+        
     "Medal Distribution For Hungary": dcc.Graph(
         figure=px.pie(
             hungary_medal_distribution,
