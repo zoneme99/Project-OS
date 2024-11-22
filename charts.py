@@ -69,9 +69,11 @@ df_sorted = df.sort_values("Year", ascending=False)
 df_age_by_year = pd.DataFrame()
 li = df["Sport"].unique()
 for sport in li:
-    df_age_by_year[sport] = df_sorted[ df_sorted["Sport"] == sport ].groupby("Year")["Age"].mean()
+    df_age_by_year[sport] = df_sorted[df_sorted["Sport"] == sport].groupby("Year")[
+        "Age"].mean()
 
-df_age_by_year["Water Polo"] = (df_age_by_year["Water Polo"].bfill()+df_age_by_year["Water Polo"].ffill())/2 
+df_age_by_year["Water Polo"] = (
+    df_age_by_year["Water Polo"].bfill()+df_age_by_year["Water Polo"].ffill())/2
 # -----
 
 
@@ -90,8 +92,9 @@ select = {
 
     "Average Age : Fencing / Gymnastics / Water Polo": dcc.Graph(
         figure=px.line(
-            df_age_by_year[["Fencing","Gymnastics","Water Polo"]],  
-            color_discrete_map={"Fencing": "#32cd6d", "Gymnastics": "#cd3292", "Water Polo": "#3294cd"}
+            df_age_by_year[["Fencing", "Gymnastics", "Water Polo"]],
+            color_discrete_map={"Fencing": "#32cd6d",
+                                "Gymnastics": "#cd3292", "Water Polo": "#3294cd"}
         ).update_layout(plot_bgcolor="#EFE1BA", paper_bgcolor="#EFE1BA", font=dict(color="#444339")),
         style=chart_style
     ),
@@ -126,7 +129,7 @@ select = {
                     len(df[(df["Sex"] == "M") & (df["Sport"] == "Fencing") & (df["Medal"] == "Gold") & (df["NOC"] == "Hungary")])],
             names=["Other Men", "Hungarian Men"],
             title="Gold Medals in Fencing"
-        ),
+        ).update_layout(plot_bgcolor="#EFE1BA", paper_bgcolor="#EFE1BA", font=dict(color="#444339")),
         style=chart_style
     ),
     "Hungary Overview": html.Div(
