@@ -62,6 +62,7 @@ df_info["Year"] = "1896,1900,1904,1908,1912".split(",")
 # while you add the graph to the figure element
 
 # Medals Per Year
+"""
 def medals_per_year( df ):
     return px.line(
     medals_only( unique_medals( df ) ), 
@@ -92,9 +93,9 @@ medals_per_year_non  = px.line(
         font=dict(color="#444339")
     )
 
-
+"""
 # Mean Age 
-
+"""
 df.sort_values("Year", ascending=False, inplace=True)
 df_age_by_year = pd.DataFrame()
 li = df["Sport"].unique()
@@ -114,8 +115,9 @@ mean_age = px.line(
     )
 
 mean_age
-
+"""
 # Medals Ratio
+"""
 def medals_ratio( df:"DataFrame", noc:str  )->"DataFrame":
     df_noc = medals_only( unique_medals( df[df["NOC"]==noc]) )
     df_all = medals_only( unique_medals( df ) )
@@ -141,7 +143,7 @@ medals_per_year_ratio = px.bar(
         paper_bgcolor="#EFE1BA", 
         font=dict(color="#444339")
     )
-
+"""
 # Test 
 sailing = px.bar(
     select_sport("Sailing"),
@@ -184,16 +186,16 @@ canoeing = px.bar(
 select={
         "Sailing": dcc.Graph( figure=sailing,style=chart_style ),
         "Canoeing": dcc.Graph( figure=canoeing, style=chart_style ),
-        "Mean Age": dcc.Graph( figure=mean_age, style=chart_style ),
+        #"Mean Age": dcc.Graph( figure=mean_age, style=chart_style ),
 
-        "Medals Per Year : Ratio" : dcc.Graph( figure=medals_per_year_ratio, style=chart_style ),
+       # "Medals Per Year : Ratio" : dcc.Graph( figure=medals_per_year_ratio, style=chart_style ),
 
-        "Medals Per Year : Total": dcc.Graph( figure=medals_per_year_total, style=chart_style ),
-        "Medals Per Year : Non-Unique": dcc.Graph( figure=medals_per_year_non, style=chart_style ),
-        "Medals Per Year : Women": dcc.Graph( figure=medals_per_year_women, style=chart_style ),
-        "Medals Per Year : Men": dcc.Graph( figure=medals_per_year_men, style=chart_style ),
-        "Medals Per Year : Summer": dcc.Graph( figure=medals_per_year_summer, style=chart_style ),
-        "Medals Per Year : Winter": dcc.Graph( figure=medals_per_year_winter, style=chart_style ),
+      #  "Medals Per Year : Total": dcc.Graph( figure=medals_per_year_total, style=chart_style ),
+      #  "Medals Per Year : Non-Unique": dcc.Graph( figure=medals_per_year_non, style=chart_style ),
+      #  "Medals Per Year : Women": dcc.Graph( figure=medals_per_year_women, style=chart_style ),
+      #  "Medals Per Year : Men": dcc.Graph( figure=medals_per_year_men, style=chart_style ),
+      #  "Medals Per Year : Summer": dcc.Graph( figure=medals_per_year_summer, style=chart_style ),
+      #  "Medals Per Year : Winter": dcc.Graph( figure=medals_per_year_winter, style=chart_style ),
     
         "h1_test": html.H1(children="Great Scott"),
         "div_test": html.Div(children=[
