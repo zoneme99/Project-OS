@@ -1,6 +1,8 @@
 import pandas as pd
 import plotly_express as px
 from dash import html, dcc, dash_table
+from dash_bootstrap_templates import load_figure_template
+load_figure_template("slate")
 
 # Create your charts here 
 df = pd.read_csv("Data/athlete_events.csv") 
@@ -20,5 +22,5 @@ def Gold_Fencing_Men():
 # check the tobbe.py file for further references
 # NOTE You should be able to add any tipe of object like a string, dash_table or another div
 select={
-        "Gold Fencing Men": dcc.Graph( figure=px.pie(values=Gold_Fencing_Men(), names=["Other Men", "Hungarian Men"], title="Gold medals in Fencing"), template="slate" ),
+        "Gold Fencing Men": dcc.Graph( figure=px.pie(values=Gold_Fencing_Men(), names=["Other Men", "Hungarian Men"], title="Gold medals in Fencing", template="slate"))
 }

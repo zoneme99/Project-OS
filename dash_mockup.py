@@ -9,10 +9,7 @@ import jonte
 import tobbe
 
 # Initialize app
-dbc_css = (
-    "https://cdn.jsdelivr.net/gh/AnnMarieW/dash-bootstrap-templates@V1.0.1/dbc.min.css"
-)
-app = Dash(__name__, external_stylesheets=[dbc.themes.SLATE, dbc_css])
+app = Dash(__name__, external_stylesheets=[dbc.themes.SLATE])
 
 # Imports the select dictionary from each persons file and
 # extrackts the key and coverts it a lable value pair that
