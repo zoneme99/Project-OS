@@ -51,7 +51,7 @@ app.layout = html.Div(
                         "margin": "auto",
                         "padding": "0px"
                     },
-                    value="Medal Distribution For Hungary"
+                    value="Hungary Overview"
                 ),
 
             ],
