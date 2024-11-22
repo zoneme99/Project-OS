@@ -1,27 +1,16 @@
 import pandas as pd
-import plotly_express as px
+import plotly.express as px
 from dash import Dash, html, dcc, dash_table
-from dash.dependencies import Input, Output
+from dash.dependencies import Input, Output, State
 import dash_bootstrap_components as dbc
-import adam
-import alex
-import jonte
-import tobbe
-import charts as charts
+import charts
 
-# Initialize app
+
 app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 server = app.server
 
-# Imports the select dictionary from each persons file and
-# extrackts the key and coverts it a lable value pair that
-# the drop down menu can use
-options_list = list()
-options_list += [{"label": key, "value": key} for key in charts.select.keys()]
-# options_list += [{"label": key, "value": key} for key in adam.select.keys()]
-# options_list += [{"label": key, "value": key} for key in alex.select.keys()]
-# options_list += [{"label": key, "value": key} for key in jonte.select.keys()]
-# options_list += [{"label": key, "value": key} for key in tobbe.select.keys()]
+
+options_list = [{"label": key, "value": key} for key in charts.select.keys()]
 
 app.layout = html.Div(
     style={
@@ -50,11 +39,24 @@ app.layout = html.Div(
                     style={
                         "width": "20vw",
                         "margin": "auto",
-                        "padding": "0px"
+                        "padding": "0px",
+                        'border': '1px solid #444339',
+                        'border-radius': '4px'
                     },
                     value="Hungary Overview"
                 ),
-
+                html.Div(className='dbc',
+                         style={"display": "flex",
+                                "justifyContent": "center", "margin-top": "20px"},
+                         children=[
+                             dbc.Button(
+                                 'Previous', id='prev-button', n_clicks=0, style={"backgroundColor": "#EFE1BA", "color": "#444339", 'border': '2px solid #444339',
+                                                                                  'border-radius': '6px', }),
+                             dbc.Button('Next', id='next-button',
+                                        n_clicks=0, style={"margin-left": "10px", "backgroundColor": "#EFE1BA", "color": "#444339", 'border': '2px solid #444339',
+                                                           'border-radius': '6px', }),
+                         ]
+                         ),
             ],
             style={
                 'flex': '0 0 auto',
@@ -62,6 +64,7 @@ app.layout = html.Div(
                 'backgroundColor': '#F1F0EB'
             }
         ),
+        dcc.Store(id="chart-index", data=0),
         html.Div(
             id="Div chart",
             children={},
@@ -76,18 +79,32 @@ app.layout = html.Div(
 
 
 @app.callback(
-    Output("Div chart", "children"),
-    Input("Sport-dropdown", "value")
+    [Output("Div chart", "children"),
+     Output("Sport-dropdown", "value")],
+    Input("chart-index", "data"),
+    State("Sport-dropdown", "value")
 )
-def medal_chart(selection_of_sport):
-
-    if not selection_of_sport:
-        selection_of_sport = "Hungary Overview"
+def update_chart(chart_index, dropdown_value):
+    if not dropdown_value:
+        dropdown_value = "Hungary Overview"
 
     select = charts.select
+    keys = list(select.keys())
 
-    return select.get(selection_of_sport, html.Div("No chart available"))
+    chart_index = chart_index % len(keys)
+    chart_key = keys[chart_index]
+
+    return select.get(chart_key, html.Div("No chart available")), chart_key
 
 
-if __name__ == "__main__":                                  # Runs the app
+@app.callback(
+    Output("chart-index", "data"),
+    [Input("prev-button", "n_clicks"), Input("next-button", "n_clicks")],
+    State("chart-index", "data")
+)
+def update_index(prev_clicks, next_clicks, current_index):
+    return current_index + (next_clicks - prev_clicks)
+
+
+if __name__ == "__main__":
     app.run(debug=True)

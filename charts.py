@@ -162,8 +162,6 @@ select = {
             y="Count",
             color="Sport",
             title="Top 10 Sports Where Hungary Won Medals",
-            color_discrete_map={"Gold": "#FFD700",
-                                "Silver": "#C0C0C0", "Bronze": "#CD7F32"}
         ).update_layout(plot_bgcolor="#EFE1BA", paper_bgcolor="#EFE1BA", font=dict(color="#444339")),
         style=chart_style
     ),
