@@ -53,6 +53,8 @@ select={
             children=[
             
             html.Img( style={ "width":"400px", "height":"247px", "border":"3px solid black", "display":"block"},  src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Flag_of_Hungary.svg" ),
+            html.Img( style={ "width":"400px", "height":"247px", "border":"3px solid black", "display":"block"},  src="https://upload.wikimedia.org/wikipedia/commons/a/a7/Olympic_flag.svg" ),
+            
             html.Div(children=[
                 html.H3("Hungary", style={"font-size": "30px", "font-weight": "bold"}),
                 html.P("-Population: 9.6 million inhabitants"),
@@ -60,7 +62,8 @@ select={
                 html.P("-Best Year in the olympics: 1952 with 102 medals"),
                 html.P("-Worst Year in the olympics: 1904 with 4 medals"),
                 html.P("-Inventor of the Rubik's Cube"),
-                html.P("-Best water-polo team in history of the sport with 15 olympic medals")
+                html.P("-Best water-polo team in history of the sport with 15 olympic medals"),
+                html.P("-Did not participate in 1920 and 1984 years Olympic summer games")
             ],
             style={"max-width": "400px", "line-height": "1.5", "font-size": "20px"})
             ]
