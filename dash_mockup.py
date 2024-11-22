@@ -7,6 +7,7 @@ import adam
 import alex
 import jonte
 import tobbe
+import charts as charts
 
 # Initialize app
 app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
@@ -15,10 +16,11 @@ app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 # extrackts the key and coverts it a lable value pair that
 # the drop down menu can use
 options_list = list()
-options_list += [{"label": key, "value": key} for key in adam.select.keys()]
-options_list += [{"label": key, "value": key} for key in alex.select.keys()]
-options_list += [{"label": key, "value": key} for key in jonte.select.keys()]
-options_list += [{"label": key, "value": key} for key in tobbe.select.keys()]
+options_list += [{"label": key, "value": key} for key in charts.select.keys()]
+# options_list += [{"label": key, "value": key} for key in adam.select.keys()]
+# options_list += [{"label": key, "value": key} for key in alex.select.keys()]
+# options_list += [{"label": key, "value": key} for key in jonte.select.keys()]
+# options_list += [{"label": key, "value": key} for key in tobbe.select.keys()]
 
 app.layout = html.Div(
     style={
@@ -85,11 +87,11 @@ def medal_chart(selection_of_sport):
 
     # Imports the select dictionary that contains the
     # charts from each persons file
-    select = dict()
-    select.update(adam.select)
-    select.update(alex.select)
-    select.update(jonte.select)
-    select.update(tobbe.select)
+    select = charts.select
+    # select.update(adam.select)
+    # select.update(alex.select)
+    # select.update(jonte.select)
+    # select.update(tobbe.select)
     """
     select={
         "Weightlifting": px.bar(
