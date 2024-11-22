@@ -20,7 +20,7 @@ chart_style = {
     'margin': '10px'
 }
 
-hungary = df[df["NOC"] == "Hungary"]
+hungary = df[df["NOC"] == "Hungary"].copy()
 
 def hash_name(name):
 
