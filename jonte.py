@@ -10,6 +10,11 @@ def Gold_Fencing_Men():
     hungarymen = len(df[(df['Sex'] == 'M') & (df['Sport'] == 'Fencing') & (df['NOC'] == 'HUN') & (df['Medal'] == 'Gold')])
     return [othermen, hungarymen]
 
+def Medals_year():
+    hungary = df[df["NOC"] == "HUN"]
+    medalyears = hungary.groupby('Year')['Medal'].count()
+    return medalyears
+
 # Add your completed charts to the select dictionary
 # select={ 
 #   "chart_name_a": dcc.Graph( figure=px.bar(    )), 
@@ -21,4 +26,5 @@ def Gold_Fencing_Men():
 # NOTE You should be able to add any tipe of object like a string, dash_table or another div
 select={
         "Gold Fencing Men": dcc.Graph( figure=px.pie(values=Gold_Fencing_Men(), names=["Other Men", "Hungarian Men"], title="Gold medals in Fencing") ),
+        "Medals per year": dcc.Graph( figure=px.line(Medals_year(), title="Medals per year") ),
 }
