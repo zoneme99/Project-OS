@@ -64,6 +64,16 @@ hungary = df[df["NOC"] == "Hungary"]
 hungary_medals_per_year = medals_per_year(unique_medals, "Hungary")
 hungary_medal_distribution = medal_distribution(unique_medals)
 
+# Kanske Redan finnns
+df_sorted = df.sort_values("Year", ascending=False)
+df_age_by_year = pd.DataFrame()
+li = df["Sport"].unique()
+for sport in li:
+    df_age_by_year[sport] = df_sorted[ df_sorted["Sport"] == sport ].groupby("Year")["Age"].mean()
+
+df_age_by_year["Water Polo"] = (df_age_by_year["Water Polo"].bfill()+df_age_by_year["Water Polo"].ffill())/2 
+# -----
+
 
 select = {
     "Medal Distribution For Hungary": dcc.Graph(
@@ -77,6 +87,15 @@ select = {
         ).update_layout(plot_bgcolor="#EFE1BA", paper_bgcolor="#EFE1BA", font=dict(color="#444339")),
         style=chart_style
     ),
+
+    "Average Age : Fencing / Gymnastics / Water Polo": dcc.Graph(
+        figure=px.line(
+            df_age_by_year[["Fencing","Gymnastics","Water Polo"]],  
+            color_discrete_map={"Fencing": "#32cd6d", "Gymnastics": "#cd3292", "Water Polo": "#3294cd"}
+        ).update_layout(plot_bgcolor="#EFE1BA", paper_bgcolor="#EFE1BA", font=dict(color="#444339")),
+        style=chart_style
+    ),
+
     "Medals Won by Hungary by Year": dcc.Graph(
         figure=px.bar(
             hungary_medals_per_year,
