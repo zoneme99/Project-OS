@@ -25,17 +25,12 @@ def medals_only(df):
     medals["Medal"] = medals["Medal"].str.strip()
     medals["Unique_Medal_Event"] = medals["Year"].astype(
         str) + "_" + medals["Event"] + "_" + medals["Medal"]
-    return medals.drop_duplicates(subset=["Unique_Medal_Event"])
+    unique_medals = medals.drop_duplicates(subset=["Unique_Medal_Event"])
+    return unique_medals
 
 
 def medal_distribution(unique_medals):
     return unique_medals.groupby("Medal").size().reset_index(name="Count")
-
-
-def top_sports_medals(unique_medals):
-    sports_medals = unique_medals.groupby(
-        ["Sport", "Medal"]).size().reset_index(name="Count")
-    return sports_medals.sort_values(by="Count", ascending=False).head(10)
 
 
 def medals_per_year(unique_medals, country):
@@ -61,6 +56,15 @@ def medals_ratio(df, noc):
 unique_medals = medals_only(df)
 hungary = df[df["NOC"] == "Hungary"]
 
+medals = hungary[hungary["Medal"].notnull()]
+
+
+total_medals_by_sport = medals.groupby(
+    "Sport").size().reset_index(name="Count")
+
+top_sports = total_medals_by_sport.sort_values(
+    by="Count", ascending=False).head(10)
+
 hungary_medals_per_year = medals_per_year(unique_medals, "Hungary")
 hungary_medal_distribution = medal_distribution(unique_medals)
 
@@ -75,31 +79,36 @@ for sport in li:
 df_age_by_year["Water Polo"] = (
     df_age_by_year["Water Polo"].bfill()+df_age_by_year["Water Polo"].ffill())/2
 # -----
+
+
 def select_sport(selection_of_sport):
     chosen_sport = (df["Sport"] == selection_of_sport) & (df["Medal"].notna())
-    medals_by_country = (df[chosen_sport].groupby("NOC")[["Medal"]].count().sort_values(by="Medal",ascending=False).reset_index()) # groups by NOC and counts number of medals, sort values and then resets index.
+    # groups by NOC and counts number of medals, sort values and then resets index.
+    medals_by_country = (df[chosen_sport].groupby("NOC")[["Medal"]].count(
+    ).sort_values(by="Medal", ascending=False).reset_index())
     return medals_by_country
+
 
 def age_distribution(chosen_sports):
     filt_df = df[df["Sport"].isin(chosen_sports)]
-    
+
     return filt_df
-    
+
 
 select = {
-     "Age distribution": dcc.Graph(
-                figure= px.box(age_distribution(["Fencing", "Water Polo", "Gymnastics"]), 
-                x="Sport", 
-                y="Age", 
-                color="Medal", 
-                title="Age distribution in Fencing, Water Polo, and Gymnastics",
-                color_discrete_map={"Gold": "#FFD700",
-                                "Silver": "#C0C0C0", "Bronze": "#CD7F32"}
-     ).update_layout(plot_bgcolor="#EFE1BA", paper_bgcolor="#EFE1BA", font=dict(color="#444339")),
+    "Age distribution": dcc.Graph(
+        figure=px.box(age_distribution(["Fencing", "Water Polo", "Gymnastics"]),
+                      x="Sport",
+                      y="Age",
+                      color="Medal",
+                      title="Age distribution in Fencing, Water Polo, and Gymnastics",
+                      color_discrete_map={"Gold": "#FFD700",
+                                          "Silver": "#C0C0C0", "Bronze": "#CD7F32"}
+                      ).update_layout(plot_bgcolor="#EFE1BA", paper_bgcolor="#EFE1BA", font=dict(color="#444339")),
         style=chart_style
-                
-        ), 
-        
+
+    ),
+
     "Medal Distribution For Hungary": dcc.Graph(
         figure=px.pie(
             hungary_medal_distribution,
@@ -135,7 +144,7 @@ select = {
     ),
     "Top 10 Sports Where Hungary Won Medals": dcc.Graph(
         figure=px.bar(
-            top_sports_medals(unique_medals),
+            top_sports,
             x="Sport",
             y="Count",
             color="Sport",
