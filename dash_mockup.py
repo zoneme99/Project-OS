@@ -11,6 +11,7 @@ import charts as charts
 
 # Initialize app
 app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
+server = app.server
 
 # Imports the select dictionary from each persons file and
 # extrackts the key and coverts it a lable value pair that
