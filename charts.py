@@ -2,6 +2,7 @@ import pandas as pd
 import plotly.express as px
 from dash import html, dcc
 import dash_bootstrap_components as dbc
+import hashlib as hl
 
 
 df = pd.read_csv("Data/athlete_events.csv")
@@ -18,6 +19,18 @@ chart_style = {
     'border-radius': '6px',
     'margin': '10px'
 }
+
+hungary = df[df["NOC"] == "Hungary"]
+
+def hash_name(name):
+
+    if (name == None):
+        return
+
+    return hl.sha256(name.encode()).hexdigest()
+
+
+hungary["Name"] = hungary["Name"].apply(hash_name)
 
 
 def medals_only(df):
@@ -54,7 +67,7 @@ def medals_ratio(df, noc):
 
 
 unique_medals = medals_only(df)
-hungary = df[df["NOC"] == "Hungary"]
+
 
 medals = hungary[hungary["Medal"].notnull()]
 
