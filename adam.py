@@ -32,11 +32,6 @@ def  unique_medals( df ):
 
     return df_new
 
-# Hungary Unique Medal Per Event
-hungary_ume = unique_medals( hungary )
-
-hungary_ume
-
 
 # ----------------
 # Medals Only
@@ -47,9 +42,6 @@ def medals_only( df ):
     df["Bronze"] = df["Medal"] == "Bronze" 
 
     return df[["Year","Gold","Silver","Bronze"]].groupby("Year").sum()
-
-hungary_medals = medals_only( hungary_ume  )
-hungary_medals
 
 
 chart_style = {
@@ -68,18 +60,100 @@ df_info["Year"] = "1896,1900,1904,1908,1912".split(",")
 # I stored the px.line in a variable outside the select dict
 # because dash doesn't like that you add .uppdate_layout 
 # while you add the graph to the figure element
-unique_medals = px.line(
-    hungary_medals, y=["Gold", "Silver", "Bronze"], 
-    color_discrete_map={"Gold": "#FFD700", "Silver": "#C0C0C0", "Bronze": "#CD7F32"}
-    ).update_layout(yaxis_title="Number of Medals", plot_bgcolor="#EFE1BA", paper_bgcolor="#EFE1BA", font=dict(color="#444339"))
 
+# Medals Per Year
+def medals_per_year( df ):
+    return px.line(
+    medals_only( unique_medals( df ) ), 
+    y=["Gold", "Silver", "Bronze"], 
+    color_discrete_map={"Gold": "#FFD700", "Silver": "#C0C0C0", "Bronze": "#CD7F32"}
+    ).update_layout(
+        yaxis_title="Number of Medals", 
+        plot_bgcolor="#EFE1BA", 
+        paper_bgcolor="#EFE1BA", 
+        font=dict(color="#444339")
+    )
+
+
+medals_per_year_total  = medals_per_year( hungary )
+medals_per_year_women  = medals_per_year( hungary[hungary["Sex"]=="F"] )
+medals_per_year_men    = medals_per_year( hungary[hungary["Sex"]=="M"] )
+medals_per_year_summer = medals_per_year( hungary[hungary["Season"]=="Summer"] )
+medals_per_year_winter = medals_per_year( hungary[hungary["Season"]=="Winter"] )
+
+medals_per_year_non  = px.line(
+    medals_only( hungary ), 
+    y=["Gold", "Silver", "Bronze"], 
+    color_discrete_map={"Gold": "#FFD700", "Silver": "#C0C0C0", "Bronze": "#CD7F32"}
+    ).update_layout(
+        yaxis_title="Number of Medals", 
+        plot_bgcolor="#EFE1BA", 
+        paper_bgcolor="#EFE1BA", 
+        font=dict(color="#444339")
+    )
+
+
+# Mean Age 
+
+df.sort_values("Year", ascending=False, inplace=True)
+df_age_by_year = pd.DataFrame()
+li = df["Sport"].unique()
+for sport in li:
+    df_age_by_year[sport] = df[ df["Sport"] == sport ].groupby("Year")["Age"].mean()
+
+df_age_by_year["Water Polo"]  = (df_age_by_year["Water Polo"].bfill()+df_age_by_year["Water Polo"].ffill())/2 
+
+mean_age = px.line( 
+    df_age_by_year[["Fencing","Gymnastics","Water Polo"]],  
+    color_discrete_map={"Fencing": "#32cd6d", "Gymnastics": "#cd3292", "Water Polo": "#3294cd"}
+    ).update_layout( 
+        yaxis_title="Maen Age",
+        plot_bgcolor="#EFE1BA",
+        paper_bgcolor="#EFE1BA", 
+        font=dict(color="#444339")
+    )
+
+mean_age
+
+# Medals Ratio
+def medals_ratio( df:"DataFrame", noc:str  )->"DataFrame":
+    df_noc = medals_only( unique_medals( df[df["NOC"]==noc]) )
+    df_all = medals_only( unique_medals( df ) )
+    df_noc["Gold (%)"] = df_noc.apply(lambda x: round(x["Gold"]/df_all.loc[x.name]["Gold"]*100, 1), axis=1) 
+    df_noc["Silver (%)"] = df_noc.apply(lambda x: round(x["Silver"]/df_all.loc[x.name]["Silver"]*100, 1), axis=1) 
+    df_noc["Bronze (%)"] = df_noc.apply(lambda x: round(x["Bronze"]/df_all.loc[x.name]["Bronze"]*100, 1), axis=1) 
+    df_noc["Medals (%)"] = df_noc.apply(lambda x: round((x["Gold"]+x["Silver"]+x["Bronze"])/(df_all.loc[x.name]["Gold"]+df_all.loc[x.name]["Silver"]+df_all.loc[x.name]["Bronze"])*100, 1), axis=1)
+    df_noc["World (%)"] = 100-df_noc["Medals (%)"]
+    return df_noc
+
+hungary_medals = medals_ratio( df, "HUN")
+sweden_medals = medals_ratio( df, "SWE")
+
+hungary_medals
+sweden_medals
+
+medals_per_year_ratio = px.bar( 
+        hungary_medals, y=["Medals (%)","World (%)"],  
+        color_discrete_map={"Medals (%)": "#5f5c4d", "World (%)": "#bcb092"}
+    ).update_layout( 
+        yaxis_title="Maen Age",
+        plot_bgcolor="#EFE1BA",
+        paper_bgcolor="#EFE1BA", 
+        font=dict(color="#444339")
+    )
+
+# Test 
 sailing = px.bar(
     select_sport("Sailing"),
     x="NOC",
     y="Medal",
     color="NOC",
     title= f"Medal overview in Sailing"
-    ).update_layout( plot_bgcolor="#EFE1BA", paper_bgcolor="#EFE1BA", font=dict(color="#444339"))
+    ).update_layout( 
+        plot_bgcolor="#EFE1BA", 
+        paper_bgcolor="#EFE1BA",
+        font=dict(color="#444339")
+    )
 
 canoeing = px.bar(
     select_sport("Canoeing"),
@@ -87,7 +161,15 @@ canoeing = px.bar(
     y="Medal",
     color="NOC",
     title= f"Medal overview in Canoeing"
-    ).update_layout( plot_bgcolor="#EFE1BA", paper_bgcolor="#EFE1BA", font=dict(color="#444339"))
+    ).update_layout( 
+        plot_bgcolor="#EFE1BA",
+        paper_bgcolor="#EFE1BA", 
+        font=dict(color="#444339")
+    )
+
+
+
+
 
 # Add your completed charts to the select dictionary
 # select={ 
@@ -102,12 +184,19 @@ canoeing = px.bar(
 select={
         "Sailing": dcc.Graph( figure=sailing,style=chart_style ),
         "Canoeing": dcc.Graph( figure=canoeing, style=chart_style ),
-         "Unique Medals": dcc.Graph( figure=unique_medals, style=chart_style ),
-         #Project-OS\olympic_flag_2.png
-         #Project-OS\olympic_flag_2.png
-         
-         "h1_test": html.H1(children="Great Scott"),
-         "div_test": html.Div(children=[
+        "Mean Age": dcc.Graph( figure=mean_age, style=chart_style ),
+
+        "Medals Per Year : Ratio" : dcc.Graph( figure=medals_per_year_ratio, style=chart_style ),
+
+        "Medals Per Year : Total": dcc.Graph( figure=medals_per_year_total, style=chart_style ),
+        "Medals Per Year : Non-Unique": dcc.Graph( figure=medals_per_year_non, style=chart_style ),
+        "Medals Per Year : Women": dcc.Graph( figure=medals_per_year_women, style=chart_style ),
+        "Medals Per Year : Men": dcc.Graph( figure=medals_per_year_men, style=chart_style ),
+        "Medals Per Year : Summer": dcc.Graph( figure=medals_per_year_summer, style=chart_style ),
+        "Medals Per Year : Winter": dcc.Graph( figure=medals_per_year_winter, style=chart_style ),
+    
+        "h1_test": html.H1(children="Great Scott"),
+        "div_test": html.Div(children=[
              html.Img( style={ "width":"400px", "height":"247px", },  src="https://upload.wikimedia.org/wikipedia/commons/a/a7/Olympic_flag.svg" ),
              dbc.Table.from_dataframe(df_info)
             ]),
