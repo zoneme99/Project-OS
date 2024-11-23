@@ -8,31 +8,30 @@ import hashlib as hl
 df = pd.read_csv("Data/athlete_events.csv")
 noc_regions = pd.read_csv("Data/noc_regions.csv")
 
-
+# Replaces the NOC style region names with propper names 
+# aka SWE becomes Sweden, HUN becomes Hungary.
 df = pd.merge(df, noc_regions[['NOC', 'region']], on='NOC', how='left')
 df['NOC'] = df['region']
 df.drop(columns=['region'], inplace=True)
 
-
+# We set the style elment in the dcc.Graph objects to 
+# this to create a border around the charts.
 chart_style = {
     'border': '2px solid #444339',
     'border-radius': '6px',
     'margin': '10px'
 }
 
-hungary = df[df["NOC"] == "Hungary"]
-
+# This retruns None incase there is a missing name ???
 def hash_name(name):
-
     if (name == None):
-        return
-
+        return None
     return hl.sha256(name.encode()).hexdigest()
 
 # Got rid of the error message:
 # 'A value is trying to be set on a copy of a slice from a DataFrame.'
 # by adding .loc
-hungary.loc[hungary.index, "Name"] = hungary["Name"].apply(hash_name)
+df.loc[df.index, "Name"] = df["Name"].apply(hash_name)
 
 def medals_only(df):
     medals = df[df["Medal"].notnull()].copy()
@@ -41,6 +40,8 @@ def medals_only(df):
         str) + "_" + medals["Event"] + "_" + medals["Medal"]
     unique_medals = medals.drop_duplicates(subset=["Unique_Medal_Event"])
     return unique_medals
+
+unique_medals = medals_only(df)
 
 
 def medal_distribution(unique_medals):
@@ -66,23 +67,23 @@ def medals_ratio(df, noc):
     ratio["Bronze (%)"] = df_noc["Bronze"] / df_all["Bronze"] * 100
     return ratio
 
-
-unique_medals = medals_only(df)
-
-
+# Those this part do anything ?
+# [
+hungary = df[df["NOC"] == "Hungary"]
 medals = hungary[hungary["Medal"].notnull()]
-
 
 total_medals_by_sport = medals.groupby(
     "Sport").size().reset_index(name="Count")
 
 top_sports = total_medals_by_sport.sort_values(
     by="Count", ascending=False).head(10)
+# ] 
 
 hungary_medals_per_year = medals_per_year(unique_medals, "Hungary")
 hungary_medal_distribution = medal_distribution(unique_medals)
 
-# Kanske Redan finnns
+# Maybe Already Exits
+# [
 df_sorted = df.sort_values("Year", ascending=False)
 df_age_by_year = pd.DataFrame()
 li = df["Sport"].unique()
@@ -92,7 +93,7 @@ for sport in li:
 
 df_age_by_year["Water Polo"] = (
     df_age_by_year["Water Polo"].bfill()+df_age_by_year["Water Polo"].ffill())/2
-# -----
+# ]
 
 
 def select_sport(selection_of_sport):
