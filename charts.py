@@ -31,15 +31,19 @@ def hash_name(name):
 # Got rid of the error message:
 # 'A value is trying to be set on a copy of a slice from a DataFrame.'
 # by adding .loc
+# I think Tobbe fixed this with .copy, but maybe he didn't push it?
 df.loc[df.index, "Name"] = df["Name"].apply(hash_name)
 
+# Removes all athletes that didn't win a medal
+# Combines the Year Medal and Event in to a new column named Unique_Medal_Event
+# Removes all rows with the same Unique_Medal_Event value, except one 
+# this way you're left with only one medal of each value per event.
 def medals_only(df):
     medals = df[df["Medal"].notnull()].copy()
-    medals["Medal"] = medals["Medal"].str.strip()
-    medals["Unique_Medal_Event"] = medals["Year"].astype(
-        str) + "_" + medals["Event"] + "_" + medals["Medal"]
-    unique_medals = medals.drop_duplicates(subset=["Unique_Medal_Event"])
-    return unique_medals
+    medals["Unique_Medal_Event"] = medals["Year"].astype(str) + "_" + medals["Event"] + "_" + medals["Medal"]
+    medals.drop_duplicates(subset=["Unique_Medal_Event"], inplace=True)
+    medals.drop(columns=["Unique_Medal_Event"], inplace=True)
+    return medals
 
 unique_medals = medals_only(df)
 
@@ -150,7 +154,7 @@ select = {
         ).update_layout(plot_bgcolor="#EFE1BA", paper_bgcolor="#EFE1BA", font=dict(color="#444339")),
         style=chart_style
     ),
-    # Does Not Work
+    # Works but the interface is a little buggy
     "Average Age : Fencing / Gymnastics / Water Polo": dcc.Graph(
         figure=px.line(
             df_age_by_year[["Fencing", "Gymnastics", "Water Polo"]],
@@ -172,7 +176,7 @@ select = {
         ).update_layout(plot_bgcolor="#EFE1BA", paper_bgcolor="#EFE1BA", font=dict(color="#444339")),
         style=chart_style
     ),
-    # Does Not Work
+    # Works but the interface is a little buggy
     "Top 10 Sports Where Hungary Won Medals": dcc.Graph(
         figure=px.bar(
             top_sports,
@@ -183,7 +187,7 @@ select = {
         ).update_layout(plot_bgcolor="#EFE1BA", paper_bgcolor="#EFE1BA", font=dict(color="#444339")),
         style=chart_style
     ),
-    # Does Not Work
+    # Works but the interface is a little buggy
     "Gold Fencing Men": dcc.Graph(
         figure=px.pie(
             values=[len(df[(df["Sex"] == "M") & (df["Sport"] == "Fencing") & (df["Medal"] == "Gold")]),
