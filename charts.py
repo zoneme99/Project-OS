@@ -29,11 +29,10 @@ def hash_name(name):
 
     return hl.sha256(name.encode()).hexdigest()
 
-# Remove Comment During Cleanup
 # Got rid of the error message:
 # 'A value is trying to be set on a copy of a slice from a DataFrame.'
-# by changing 'hungary["Name"] = hungary["Name"].apply(hash_name)' to
-hungary["Name"].apply(hash_name)
+# by adding .loc
+hungary.loc[hungary.index, "Name"] = hungary["Name"].apply(hash_name)
 
 def medals_only(df):
     medals = df[df["Medal"].notnull()].copy()
