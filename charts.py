@@ -67,7 +67,7 @@ def medals_ratio(df, noc):
     ratio["Bronze (%)"] = df_noc["Bronze"] / df_all["Bronze"] * 100
     return ratio
 
-# Those this part do anything ?
+# Does this part do anything ?
 # [
 hungary = df[df["NOC"] == "Hungary"]
 medals = hungary[hungary["Medal"].notnull()]
