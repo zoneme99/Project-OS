@@ -43,7 +43,11 @@ def medals_only(df):
 
 unique_medals = medals_only(df)
 
-
+# The Variable that accesses these function
+# are placed at row 92 and 93 
+# It might be more clear if we put the variables next to 
+# the functions
+# [
 def medal_distribution(unique_medals):
     return unique_medals.groupby("Medal").size().reset_index(name="Count")
 
@@ -51,13 +55,19 @@ def medal_distribution(unique_medals):
 def medals_per_year(unique_medals, country):
     filtered_data = unique_medals[unique_medals["NOC"] == country]
     return filtered_data.groupby(["Year", "Medal"]).size().reset_index(name="Count")
+# ]
 
 
+# There are two of these 
+# I believe neither of them is in use 
+# [
 def select_sport(sport):
     filtered = (df["Sport"] == sport) & (df["Medal"].notna())
     return df[filtered].groupby("NOC")[["Medal"]].count().sort_values(by="Medal", ascending=False).reset_index()
+# ]
 
-
+# Not in use?
+# [
 def medals_ratio(df, noc):
     df_noc = medals_only(df[df["NOC"] == noc])
     df_all = medals_only(df)
@@ -66,8 +76,10 @@ def medals_ratio(df, noc):
     ratio["Silver (%)"] = df_noc["Silver"] / df_all["Silver"] * 100
     ratio["Bronze (%)"] = df_noc["Bronze"] / df_all["Bronze"] * 100
     return ratio
+# ] 
 
 # Does this part do anything ?
+# connected to Top 10 Sports Where Hungary Won Medals
 # [
 hungary = df[df["NOC"] == "Hungary"]
 medals = hungary[hungary["Medal"].notnull()]
@@ -83,6 +95,7 @@ hungary_medals_per_year = medals_per_year(unique_medals, "Hungary")
 hungary_medal_distribution = medal_distribution(unique_medals)
 
 # Maybe Already Exits
+# Connected to 'Top 10 Sports Where Hungary Won Medals'
 # [
 df_sorted = df.sort_values("Year", ascending=False)
 df_age_by_year = pd.DataFrame()
@@ -95,14 +108,15 @@ df_age_by_year["Water Polo"] = (
     df_age_by_year["Water Polo"].bfill()+df_age_by_year["Water Polo"].ffill())/2
 # ]
 
-
+# Not in Use ?
+# [ 
 def select_sport(selection_of_sport):
     chosen_sport = (df["Sport"] == selection_of_sport) & (df["Medal"].notna())
     # groups by NOC and counts number of medals, sort values and then resets index.
     medals_by_country = (df[chosen_sport].groupby("NOC")[["Medal"]].count(
     ).sort_values(by="Medal", ascending=False).reset_index())
     return medals_by_country
-
+# ]
 
 def age_distribution(chosen_sports):
     filt_df = df[df["Sport"].isin(chosen_sports)]
@@ -111,6 +125,7 @@ def age_distribution(chosen_sports):
 
 
 select = {
+    # Works
     "Age distribution": dcc.Graph(
         figure=px.box(age_distribution(["Fencing", "Water Polo", "Gymnastics"]),
                       x="Sport",
@@ -123,7 +138,7 @@ select = {
         style=chart_style
 
     ),
-
+    # Works
     "Medal Distribution For Hungary": dcc.Graph(
         figure=px.pie(
             hungary_medal_distribution,
@@ -135,7 +150,7 @@ select = {
         ).update_layout(plot_bgcolor="#EFE1BA", paper_bgcolor="#EFE1BA", font=dict(color="#444339")),
         style=chart_style
     ),
-
+    # Does Not Work
     "Average Age : Fencing / Gymnastics / Water Polo": dcc.Graph(
         figure=px.line(
             df_age_by_year[["Fencing", "Gymnastics", "Water Polo"]],
@@ -144,7 +159,7 @@ select = {
         ).update_layout(plot_bgcolor="#EFE1BA", paper_bgcolor="#EFE1BA", font=dict(color="#444339")),
         style=chart_style
     ),
-
+    # Works
     "Medals Won by Hungary by Year": dcc.Graph(
         figure=px.bar(
             hungary_medals_per_year,
@@ -157,6 +172,7 @@ select = {
         ).update_layout(plot_bgcolor="#EFE1BA", paper_bgcolor="#EFE1BA", font=dict(color="#444339")),
         style=chart_style
     ),
+    # Does Not Work
     "Top 10 Sports Where Hungary Won Medals": dcc.Graph(
         figure=px.bar(
             top_sports,
@@ -167,6 +183,7 @@ select = {
         ).update_layout(plot_bgcolor="#EFE1BA", paper_bgcolor="#EFE1BA", font=dict(color="#444339")),
         style=chart_style
     ),
+    # Does Not Work
     "Gold Fencing Men": dcc.Graph(
         figure=px.pie(
             values=[len(df[(df["Sex"] == "M") & (df["Sport"] == "Fencing") & (df["Medal"] == "Gold")]),
@@ -176,6 +193,7 @@ select = {
         ).update_layout(plot_bgcolor="#EFE1BA", paper_bgcolor="#EFE1BA", font=dict(color="#444339")),
         style=chart_style
     ),
+    # Works
     "Hungary Overview": html.Div(
         style={
             "display": "flex",
