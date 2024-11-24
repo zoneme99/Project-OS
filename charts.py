@@ -3,6 +3,7 @@ import plotly.express as px
 from dash import html, dcc
 import dash_bootstrap_components as dbc
 import hashlib as hl
+import numpy as np
 
 
 df = pd.read_csv("Data/athlete_events.csv")
@@ -82,7 +83,25 @@ def medals_ratio(df, noc):
     return ratio
 # ] 
 
-# Does this part do anything ?
+# Returns a DataFrame summing up all the medals the 
+# countires have take year by year.
+# Argument noc : The countires you want be returned
+# Argument ratio : Set to true to conver the number of medals in to percentage.
+def get_medals_only(noc:list, ratio:bool=False):
+    unique_medals = medals_only(df[ df["Season"]=="Summer" ])
+    medals = pd.DataFrame( index=unique_medals["Year"] )
+    medals = unique_medals[ unique_medals["NOC"].isin(noc) ].groupby(["Year","NOC"]).size().unstack().copy()
+    medals["World"] = unique_medals.groupby("Year")["Medal"].size()-medals.apply(np.sum, axis=1)
+    if ratio: 
+        medals["Total"] = medals.apply(np.sum, axis=1)
+        for _ in noc+["World"]:
+            medals[_] =  (medals[_]*100)/medals["Total"]
+        medals.drop( columns=["Total"], inplace=True)
+    return medals
+
+medals_ratio = get_medals_only(["Hungary","Sweden","USA"], True)
+
+
 # connected to Top 10 Sports Where Hungary Won Medals
 # [
 hungary = df[df["NOC"] == "Hungary"]
@@ -155,7 +174,7 @@ select = {
         style=chart_style
     ),
     # Works but the interface is a little buggy
-    "Average Age : Fencing / Gymnastics / Water Polo": dcc.Graph(
+    "Average Age": dcc.Graph(
         figure=px.line(
             df_age_by_year[["Fencing", "Gymnastics", "Water Polo"]],
             color_discrete_map={"Fencing": "#32cd6d",
@@ -174,6 +193,14 @@ select = {
             color_discrete_map={"Gold": "#FFD700",
                                 "Silver": "#C0C0C0", "Bronze": "#CD7F32"}
         ).update_layout(plot_bgcolor="#EFE1BA", paper_bgcolor="#EFE1BA", font=dict(color="#444339")),
+        style=chart_style
+    ),
+    "Percentage of Medals": dcc.Graph(
+        figure = px.bar(
+            medals_ratio, 
+            color_discrete_map={"Hungary": "#3f8c37", "World": "#bcb092","USA":"#c73434", "Sweden":"#37518c" },
+            title="Percentage of Medals Won During Summer Games             Pop 2016 : USA 323m | Sweden 10m |  Hungary 10m ",
+        ).update_layout( yaxis_title="Medals (%)", plot_bgcolor="#EFE1BA",paper_bgcolor="#EFE1BA", font=dict(color="#444339")),
         style=chart_style
     ),
     # Works but the interface is a little buggy
