@@ -33,3 +33,4 @@ def fencing_gold_by_noc():
     gold = df[(df['Medal'] == 'Gold') & (df['Sport'] == 'Fencing')].groupby('NOC')['Medal'].count()
     gold = gold.sort_values(ascending=False)
     return [*gold.iloc[0:3], gold.iloc[3:].sum()], ['Italy','France','Hungary', 'Other']
+ 
