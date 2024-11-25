@@ -112,9 +112,7 @@ def get_medals_only(noc:list, ratio:bool=False):
 
 medals_ratio = get_medals_only(["Hungary","Sweden","USA"], True)
 
-# !!! Remove Comment before Render
-# connected to Top 10 Sports Where Hungary Won Medals
-# [
+
 hungary = df[df["NOC"] == "Hungary"]
 medals = hungary[hungary["Medal"].notnull()]
 
@@ -123,24 +121,16 @@ total_medals_by_sport = medals.groupby(
 
 top_sports = total_medals_by_sport.sort_values(
     by="Count", ascending=False).head(10)
-# ] 
+
 
 hungary_medals_per_year = medals_per_year(unique_medals, "Hungary")
 hungary_medal_distribution = medal_distribution(unique_medals)
 
-# !!! Remove Comment before Render
-# Adam... Clean this upp 
-# [
-df_sorted = df.sort_values("Year", ascending=False)
-df_age_by_year = pd.DataFrame()
-li = df["Sport"].unique()
-for sport in li:
-    df_age_by_year[sport] = df_sorted[df_sorted["Sport"] == sport].groupby("Year")[
-        "Age"].mean()
 
-df_age_by_year["Water Polo"] = (
-    df_age_by_year["Water Polo"].bfill()+df_age_by_year["Water Polo"].ffill())/2
-# ]
+df_mean_age = df[ (df["Sport"] == "Water Polo") |  (df["Sport"] == "Gymnastics") | (df["Sport"] == "Fencing")].groupby(["Year","Sport"])["Age"].mean()
+df_mean_age = df_mean_age.unstack()
+df_mean_age["Water Polo"] = (df_mean_age["Water Polo"].bfill()+df_mean_age["Water Polo"].ffill())/2
+
 
 # !!! Remove Comment before Render
 # Not in Use? Remvoe
@@ -160,7 +150,6 @@ def age_distribution(chosen_sports):
 
 
 select = {
-    # Works
     "Age distribution": dcc.Graph(
         figure=px.box(age_distribution(["Fencing", "Water Polo", "Gymnastics"]),
                       x="Sport",
@@ -173,7 +162,6 @@ select = {
         style=chart_style
 
     ),
-    # Works
     "Medal Distribution For Hungary": dcc.Graph(
         figure=px.pie(
             hungary_medal_distribution,
@@ -185,16 +173,15 @@ select = {
         ).update_layout(plot_bgcolor="#EFE1BA", paper_bgcolor="#EFE1BA", font=dict(color="#444339")),
         style=chart_style
     ),
-    # Works but the interface is a little buggy
     "Average Age": dcc.Graph(
         figure=px.line(
-            df_age_by_year[["Fencing", "Gymnastics", "Water Polo"]],
+            df_mean_age,
+            title="Average Age",
             color_discrete_map={"Fencing": "#32cd6d",
                                 "Gymnastics": "#cd3292", "Water Polo": "#3294cd"}
-        ).update_layout(plot_bgcolor="#EFE1BA", paper_bgcolor="#EFE1BA", font=dict(color="#444339")),
+        ).update_layout(yaxis_title="Age", plot_bgcolor="#EFE1BA", paper_bgcolor="#EFE1BA", font=dict(color="#444339")),
         style=chart_style
     ),
-    # Works
     "Medals Won by Hungary by Year": dcc.Graph(
         figure=px.bar(
             hungary_medals_per_year,
@@ -215,7 +202,6 @@ select = {
         ).update_layout( yaxis_title="Medals (%)", plot_bgcolor="#EFE1BA",paper_bgcolor="#EFE1BA", font=dict(color="#444339")),
         style=chart_style
     ),
-    # Works but the interface is a little buggy
     "Top 10 Sports Where Hungary Won Medals": dcc.Graph(
         figure=px.bar(
             top_sports,
@@ -226,7 +212,6 @@ select = {
         ).update_layout(plot_bgcolor="#EFE1BA", paper_bgcolor="#EFE1BA", font=dict(color="#444339")),
         style=chart_style
     ),
-    # Works but the interface is a little buggy
     "Gold Fencing Men": dcc.Graph(
         figure=px.pie(
             values=[len(df[(df["Sex"] == "M") & (df["Sport"] == "Fencing") & (df["Medal"] == "Gold")]),
@@ -236,7 +221,6 @@ select = {
         ).update_layout(plot_bgcolor="#EFE1BA", paper_bgcolor="#EFE1BA", font=dict(color="#444339")),
         style=chart_style
     ),
-    # Works
     "Hungary Overview": html.Div(
         style={
             "display": "flex",
