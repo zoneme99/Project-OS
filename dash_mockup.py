@@ -1,12 +1,15 @@
-from dash import Dash, html, dcc, Input, Output, State
-import dash as dash
+from dash import Dash, html, dcc, Input, Output, State, callback_context
 import dash_bootstrap_components as dbc
 import charts
 
 app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 server = app.server
 
+
 options_list = [{"label": key, "value": key} for key in charts.select.keys()]
+
+default_chart = "Hungary Overview"
+default_index = list(charts.select.keys()).index(default_chart)
 
 
 app.layout = html.Div(
@@ -40,7 +43,7 @@ app.layout = html.Div(
                         'border': '1px solid #444339',
                         'border-radius': '4px'
                     },
-                    value="Hungary Overview"
+                    value=default_chart
                 ),
                 html.Div(
                     className='dbc',
@@ -75,7 +78,8 @@ app.layout = html.Div(
                 'backgroundColor': '#F1F0EB'
             }
         ),
-        dcc.Store(id="chart-index", data=0),
+
+        dcc.Store(id="chart-index", data=default_index),
         html.Div(
             id="Div chart",
             children={},
@@ -102,7 +106,7 @@ def update_chart(prev_clicks, next_clicks, dropdown_value, current_index):
     select = charts.select
     keys = list(select.keys())
 
-    ctx = dash.callback_context
+    ctx = callback_context
 
     if ctx.triggered and ctx.triggered[0]["prop_id"] == "Sport-dropdown.value":
 
