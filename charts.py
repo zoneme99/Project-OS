@@ -28,6 +28,8 @@ chart_style = {
     'margin': '10px'
 }
 
+hungary = df[df["NOC"] == "Hungary"].copy()
+
 # !!! Remove Comment before Render
 # This retruns None incase there is a missing name ???
 def hash_name(name):
@@ -122,6 +124,9 @@ total_medals_by_sport = medals.groupby(
 top_sports = total_medals_by_sport.sort_values(
     by="Count", ascending=False).head(10)
 
+df_top_unique = unique_medals[ unique_medals["NOC"]=="Hungary" ].groupby("Sport", as_index=False)["Medal"].count()
+df_top_unique.sort_values("Medal", ascending=False, inplace=True)
+
 
 hungary_medals_per_year = medals_per_year(unique_medals, "Hungary")
 hungary_medal_distribution = medal_distribution(unique_medals)
@@ -167,7 +172,7 @@ select = {
         style=chart_style
 
     ),
-    "Medal Distribution For Hungary": dcc.Graph(
+    "Medal Distribution": dcc.Graph(
         figure=px.pie(
             hungary_medal_distribution,
             names="Medal",
@@ -187,7 +192,7 @@ select = {
         ).update_layout(yaxis_title="Age", plot_bgcolor="#EFE1BA", paper_bgcolor="#EFE1BA", font=dict(color="#444339")),
         style=chart_style
     ),
-    "Medals Won by Hungary by Year": dcc.Graph(
+    "Medals Won by Year": dcc.Graph(
         figure=px.bar(
             hungary_medals_per_year,
             x="Year",
@@ -207,13 +212,23 @@ select = {
         ).update_layout( yaxis_title="Medals (%)", plot_bgcolor="#EFE1BA",paper_bgcolor="#EFE1BA", font=dict(color="#444339")),
         style=chart_style
     ),
-    "Top 10 Sports Where Hungary Won Medals": dcc.Graph(
+    "Top 10 Sports": dcc.Graph(
         figure=px.bar(
             top_sports,
             x="Sport",
             y="Count",
             color="Sport",
             title="Top 10 Sports Where Hungary Won Medals",
+        ).update_layout(plot_bgcolor="#EFE1BA", paper_bgcolor="#EFE1BA", font=dict(color="#444339")),
+        style=chart_style
+    ),
+    "Top 10 Sports Unique": dcc.Graph(
+        figure=px.bar(
+            df_top_unique.head(10),
+            x="Sport",
+            y="Medal",
+            color="Sport",
+            title="Top 10 Sports Where Hungary Won Medals (Counting only one medal per Team) ",
         ).update_layout(plot_bgcolor="#EFE1BA", paper_bgcolor="#EFE1BA", font=dict(color="#444339")),
         style=chart_style
     ),
@@ -257,9 +272,9 @@ select = {
                             html.P("-Population: 9.6 million inhabitants"),
                             html.P("-Weather: Cold winters and warm summers"),
                             html.P(
-                                "-Best Year in the olympics: 1952 with 102 medals"),
+                                "-Best Year in the olympics: 1952 with 43 medals"),
                             html.P(
-                                "-Worst Year in the olympics: 1904 with 4 medals"),
+                                "-Worst Year in the olympics: 1896 with 4 medals"),
                             html.P("-Inventor of the Rubik's Cube"),
                             html.P(
                                 "-Best water-polo team in history of the sport with 15 olympic medals"),
