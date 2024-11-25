@@ -1,8 +1,14 @@
 import pandas as pd
 import plotly.express as px
 from dash import html, dcc
-import dash_bootstrap_components as dbc
 import hashlib as hl
+import numpy as np
+# !!! Remove Comment before Render
+# Används inte, ta bort?
+# [
+import dash_bootstrap_components as dbc
+# ]
+
 
 
 df = pd.read_csv("Data/athlete_events.csv")
@@ -24,27 +30,39 @@ chart_style = {
 
 hungary = df[df["NOC"] == "Hungary"].copy()
 
+# !!! Remove Comment before Render
+# This retruns None incase there is a missing name ???
 def hash_name(name):
     if (name == None):
         return None
     return hl.sha256(name.encode()).hexdigest()
 
+# !!! Remove Comment before Render
 # Got rid of the error message:
 # 'A value is trying to be set on a copy of a slice from a DataFrame.'
 # by adding .loc
+# I think Tobbe fixed this with .copy, but maybe he didn't push it?
 df.loc[df.index, "Name"] = df["Name"].apply(hash_name)
 
+# Removes all athletes that didn't win a medal
+# Combines the Year Medal and Event in to a new column named Unique_Medal_Event
+# Removes all rows with the same Unique_Medal_Event value, except one 
+# this way you're left with only one medal of each value per event.
 def medals_only(df):
     medals = df[df["Medal"].notnull()].copy()
-    medals["Medal"] = medals["Medal"].str.strip()
-    medals["Unique_Medal_Event"] = medals["Year"].astype(
-        str) + "_" + medals["Event"] + "_" + medals["Medal"]
-    unique_medals = medals.drop_duplicates(subset=["Unique_Medal_Event"])
-    return unique_medals
+    medals["Unique_Medal_Event"] = medals["Year"].astype(str) + "_" + medals["Event"] + "_" + medals["Medal"]
+    medals.drop_duplicates(subset=["Unique_Medal_Event"], inplace=True)
+    medals.drop(columns=["Unique_Medal_Event"], inplace=True)
+    return medals
 
 unique_medals = medals_only(df)
 
-
+# !!! Remove Comment before Render
+# The Variable that accesses these function
+# are placed at row 92 and 93 
+# It might be more clear if we put the variables next to 
+# the functions
+# [
 def medal_distribution(unique_medals):
     return unique_medals.groupby("Medal").size().reset_index(name="Count")
 
@@ -52,13 +70,22 @@ def medal_distribution(unique_medals):
 def medals_per_year(unique_medals, country):
     filtered_data = unique_medals[unique_medals["NOC"] == country]
     return filtered_data.groupby(["Year", "Medal"]).size().reset_index(name="Count")
+# ]
 
 
+# !!! Remove Comment before Render
+# There are two of these and I believe neither of them is in use 
+# [
 def select_sport(sport):
     filtered = (df["Sport"] == sport) & (df["Medal"].notna())
     return df[filtered].groupby("NOC")[["Medal"]].count().sort_values(by="Medal", ascending=False).reset_index()
+# ]
 
-
+# !!! Remove Comment before Render
+# Not in use, remove?
+# Could be usefull if one wants to make a line chart 
+# This function gets over written att line 111
+# [
 def medals_ratio(df, noc):
     df_noc = medals_only(df[df["NOC"] == noc])
     df_all = medals_only(df)
@@ -67,8 +94,28 @@ def medals_ratio(df, noc):
     ratio["Silver (%)"] = df_noc["Silver"] / df_all["Silver"] * 100
     ratio["Bronze (%)"] = df_noc["Bronze"] / df_all["Bronze"] * 100
     return ratio
+# ] 
 
-# Does this part do anything ?
+# Returns a DataFrame summing up all the medals the 
+# countires have take year by year.
+# Argument noc : The countires you want be returned
+# Argument ratio : Set to true to conver the number of medals in to percentage.
+def get_medals_only(noc:list, ratio:bool=False):
+    unique_medals = medals_only(df[ df["Season"]=="Summer" ])
+    medals = pd.DataFrame( index=unique_medals["Year"] )
+    medals = unique_medals[ unique_medals["NOC"].isin(noc) ].groupby(["Year","NOC"]).size().unstack().copy()
+    medals["World"] = unique_medals.groupby("Year")["Medal"].size()-medals.apply(np.sum, axis=1)
+    if ratio: 
+        medals["Total"] = medals.apply(np.sum, axis=1)
+        for _ in noc+["World"]:
+            medals[_] =  (medals[_]*100)/medals["Total"]
+        medals.drop( columns=["Total"], inplace=True)
+    return medals
+
+medals_ratio = get_medals_only(["Hungary","Sweden","USA"], True)
+
+# !!! Remove Comment before Render
+# connected to Top 10 Sports Where Hungary Won Medals
 # [
 hungary = df[df["NOC"] == "Hungary"]
 medals = hungary[hungary["Medal"].notnull()]
@@ -83,7 +130,8 @@ top_sports = total_medals_by_sport.sort_values(
 hungary_medals_per_year = medals_per_year(unique_medals, "Hungary")
 hungary_medal_distribution = medal_distribution(unique_medals)
 
-# Maybe Already Exits
+# !!! Remove Comment before Render
+# Adam... Clean this upp 
 # [
 df_sorted = df.sort_values("Year", ascending=False)
 df_age_by_year = pd.DataFrame()
@@ -96,14 +144,16 @@ df_age_by_year["Water Polo"] = (
     df_age_by_year["Water Polo"].bfill()+df_age_by_year["Water Polo"].ffill())/2
 # ]
 
-
+# !!! Remove Comment before Render
+# Not in Use? Remvoe
+# [ 
 def select_sport(selection_of_sport):
     chosen_sport = (df["Sport"] == selection_of_sport) & (df["Medal"].notna())
     # groups by NOC and counts number of medals, sort values and then resets index.
     medals_by_country = (df[chosen_sport].groupby("NOC")[["Medal"]].count(
     ).sort_values(by="Medal", ascending=False).reset_index())
     return medals_by_country
-
+# ]
 
 def age_distribution(chosen_sports):
     filt_df = df[df["Sport"].isin(chosen_sports)]
@@ -112,6 +162,7 @@ def age_distribution(chosen_sports):
 
 
 select = {
+    # Works
     "Age distribution": dcc.Graph(
         figure=px.box(age_distribution(["Fencing", "Water Polo", "Gymnastics"]),
                       x="Sport",
@@ -124,7 +175,7 @@ select = {
         style=chart_style
 
     ),
-
+    # Works
     "Medal Distribution For Hungary": dcc.Graph(
         figure=px.pie(
             hungary_medal_distribution,
@@ -136,8 +187,8 @@ select = {
         ).update_layout(plot_bgcolor="#EFE1BA", paper_bgcolor="#EFE1BA", font=dict(color="#444339")),
         style=chart_style
     ),
-
-    "Average Age : Fencing / Gymnastics / Water Polo": dcc.Graph(
+    # Works but the interface is a little buggy
+    "Average Age": dcc.Graph(
         figure=px.line(
             df_age_by_year[["Fencing", "Gymnastics", "Water Polo"]],
             color_discrete_map={"Fencing": "#32cd6d",
@@ -145,7 +196,7 @@ select = {
         ).update_layout(plot_bgcolor="#EFE1BA", paper_bgcolor="#EFE1BA", font=dict(color="#444339")),
         style=chart_style
     ),
-
+    # Works
     "Medals Won by Hungary by Year": dcc.Graph(
         figure=px.bar(
             hungary_medals_per_year,
@@ -158,6 +209,15 @@ select = {
         ).update_layout(plot_bgcolor="#EFE1BA", paper_bgcolor="#EFE1BA", font=dict(color="#444339")),
         style=chart_style
     ),
+    "Percentage of Medals": dcc.Graph(
+        figure = px.bar(
+            medals_ratio, 
+            color_discrete_map={"Hungary": "#3f8c37", "World": "#bcb092","USA":"#c73434", "Sweden":"#37518c" },
+            title="Percentage of Medals Won During Summer Games             Pop 2016 : USA 323m | Sweden 10m |  Hungary 10m ",
+        ).update_layout( yaxis_title="Medals (%)", plot_bgcolor="#EFE1BA",paper_bgcolor="#EFE1BA", font=dict(color="#444339")),
+        style=chart_style
+    ),
+    # Works but the interface is a little buggy
     "Top 10 Sports Where Hungary Won Medals": dcc.Graph(
         figure=px.bar(
             top_sports,
@@ -168,6 +228,7 @@ select = {
         ).update_layout(plot_bgcolor="#EFE1BA", paper_bgcolor="#EFE1BA", font=dict(color="#444339")),
         style=chart_style
     ),
+    # Works but the interface is a little buggy
     "Gold Fencing Men": dcc.Graph(
         figure=px.pie(
             values=[len(df[(df["Sex"] == "M") & (df["Sport"] == "Fencing") & (df["Medal"] == "Gold")]),
@@ -177,6 +238,7 @@ select = {
         ).update_layout(plot_bgcolor="#EFE1BA", paper_bgcolor="#EFE1BA", font=dict(color="#444339")),
         style=chart_style
     ),
+    # Works
     "Hungary Overview": html.Div(
         style={
             "display": "flex",
