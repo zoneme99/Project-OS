@@ -28,6 +28,8 @@ chart_style = {
     'margin': '10px'
 }
 
+hungary = df[df["NOC"] == "Hungary"].copy()
+
 # !!! Remove Comment before Render
 # This retruns None incase there is a missing name ???
 def hash_name(name):
