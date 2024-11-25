@@ -191,85 +191,6 @@ def fencing_gold_by_noc():
 
 
 select = {
-    "Age distribution": dcc.Graph(
-        figure=px.box(
-            age_distribution(["Fencing", "Water Polo", "Gymnastics"]),
-            x="Sport",
-            y="Age",
-            color="Medal",
-            title="Age distribution in Fencing, Water Polo, and Gymnastics",
-            color_discrete_map=medal_colors
-        ).update_layout(plot_bgcolor="#EFE1BA", paper_bgcolor="#EFE1BA", font=dict(color="#444339")),
-        style=chart_style
-    ),
-    "Medal Distribution": dcc.Graph(
-        figure=px.pie(
-            hungary_medal_distribution,
-            names="Medal",
-            values="Count",
-            title="Medal Distribution for Hungary",
-            color="Medal",
-            color_discrete_map=medal_colors
-        ).update_layout(plot_bgcolor="#EFE1BA", paper_bgcolor="#EFE1BA", font=dict(color="#444339")),
-        style=chart_style
-    ),
-    "Average Age": dcc.Graph(
-        figure=px.line(
-            df_mean_age,
-            title="Average Age",
-            color_discrete_map={"Fencing": "#32cd6d",
-                                "Gymnastics": "#cd3292", "Water Polo": "#3294cd"}
-        ).update_layout(yaxis_title="Age", plot_bgcolor="#EFE1BA", paper_bgcolor="#EFE1BA", font=dict(color="#444339")),
-        style=chart_style
-    ),
-    "Medals Won by Year": dcc.Graph(
-        figure=px.bar(
-            hungary_medals_per_year,
-            x="Year",
-            y="Count",
-            color="Medal",
-            title="Medals for Hungary by Type per Year",
-            color_discrete_map=medal_colors
-        ).update_layout(plot_bgcolor="#EFE1BA", paper_bgcolor="#EFE1BA", font=dict(color="#444339")),
-        style=chart_style
-    ),
-    "Percentage of Medals": dcc.Graph(
-        figure=px.bar(
-            medals_ratio,
-            color_discrete_map={
-                "Hungary": "#3f8c37", "World": "#bcb092", "USA": "#c73434", "Sweden": "#37518c"},
-            title="Percentage of Medals Won During Summer Games             Pop 2016 : USA 323m | Sweden 10m |  Hungary 10m ",
-        ).update_layout(yaxis_title="Medals (%)", plot_bgcolor="#EFE1BA", paper_bgcolor="#EFE1BA", font=dict(color="#444339")),
-        style=chart_style
-    ),
-    "Top 10 Sports": dcc.Graph(
-        figure=px.bar(
-            top_sports,
-            x="Sport",
-            y="Count",
-            color="Sport",
-            title="Top 10 Sports Where Hungary Won Medals",
-        ).update_layout(plot_bgcolor="#EFE1BA", paper_bgcolor="#EFE1BA", font=dict(color="#444339")),
-        style=chart_style
-    ),
-    "Top 10 Sports Unique": dcc.Graph(
-        figure=px.bar(
-            df_top_unique.head(10),
-            x="Sport",
-            y="Medal",
-            color="Sport",
-            title="Top 10 Sports Where Hungary Won Medals (Counting only one medal per Team) ",
-        ).update_layout(plot_bgcolor="#EFE1BA", paper_bgcolor="#EFE1BA", font=dict(color="#444339")),
-        style=chart_style
-    ),
-    "Gold Fencing Men": dcc.Graph(
-        figure=px.pie(
-            values=fencing_gold_by_noc()[0],
-            names=fencing_gold_by_noc()[1],
-            title="Gold Medals in Fencing"
-        ).update_layout(plot_bgcolor="#EFE1BA", paper_bgcolor="#EFE1BA", font=dict(color="#444339")),
-        style=chart_style
-    ),
     "Hungary Overview": html.Div(
         style={
             "display": "flex",
@@ -324,6 +245,84 @@ select = {
                 ]
             )
         ]
-    )
-
+    ),
+    "Top 10 Sports": dcc.Graph(
+        figure=px.bar(
+            top_sports,
+            x="Sport",
+            y="Count",
+            color="Sport",
+            title="Top 10 Sports Where Hungary Won Medals",
+        ).update_layout(plot_bgcolor="#EFE1BA", paper_bgcolor="#EFE1BA", font=dict(color="#444339")),
+        style=chart_style
+    ),
+    "Top 10 Sports Unique": dcc.Graph(
+        figure=px.bar(
+            df_top_unique.head(10),
+            x="Sport",
+            y="Medal",
+            color="Sport",
+            title="Top 10 Sports Where Hungary Won Medals (Counting only one medal per Team) ",
+        ).update_layout(plot_bgcolor="#EFE1BA", paper_bgcolor="#EFE1BA", font=dict(color="#444339")),
+        style=chart_style
+    ),
+    "Gold Fencing Men": dcc.Graph(
+        figure=px.pie(
+            values=fencing_gold_by_noc()[0],
+            names=fencing_gold_by_noc()[1],
+            title="Gold Medals in Fencing"
+        ).update_layout(plot_bgcolor="#EFE1BA", paper_bgcolor="#EFE1BA", font=dict(color="#444339")),
+        style=chart_style
+    ),
+    "Medals Won by Year": dcc.Graph(
+        figure=px.bar(
+            hungary_medals_per_year,
+            x="Year",
+            y="Count",
+            color="Medal",
+            title="Medals for Hungary by Type per Year",
+            color_discrete_map=medal_colors
+        ).update_layout(plot_bgcolor="#EFE1BA", paper_bgcolor="#EFE1BA", font=dict(color="#444339")),
+        style=chart_style
+    ),
+    "Medal Distribution": dcc.Graph(
+        figure=px.pie(
+            hungary_medal_distribution,
+            names="Medal",
+            values="Count",
+            title="Medal Distribution for Hungary",
+            color="Medal",
+            color_discrete_map=medal_colors
+        ).update_layout(plot_bgcolor="#EFE1BA", paper_bgcolor="#EFE1BA", font=dict(color="#444339")),
+        style=chart_style
+    ),
+    "Percentage of Medals": dcc.Graph(
+        figure=px.bar(
+            medals_ratio,
+            color_discrete_map={
+                "Hungary": "#3f8c37", "World": "#bcb092", "USA": "#c73434", "Sweden": "#37518c"},
+            title="Percentage of Medals Won During Summer Games             Pop 2016 : USA 323m | Sweden 10m |  Hungary 10m ",
+        ).update_layout(yaxis_title="Medals (%)", plot_bgcolor="#EFE1BA", paper_bgcolor="#EFE1BA", font=dict(color="#444339")),
+        style=chart_style
+    ),
+    "Average Age": dcc.Graph(
+        figure=px.line(
+            df_mean_age,
+            title="Average Age",
+            color_discrete_map={"Fencing": "#32cd6d",
+                                "Gymnastics": "#cd3292", "Water Polo": "#3294cd"}
+        ).update_layout(yaxis_title="Age", plot_bgcolor="#EFE1BA", paper_bgcolor="#EFE1BA", font=dict(color="#444339")),
+        style=chart_style
+    ),
+    "Age distribution": dcc.Graph(
+        figure=px.box(
+            age_distribution(["Fencing", "Water Polo", "Gymnastics"]),
+            x="Sport",
+            y="Age",
+            color="Medal",
+            title="Age distribution in Fencing, Water Polo, and Gymnastics",
+            color_discrete_map=medal_colors
+        ).update_layout(plot_bgcolor="#EFE1BA", paper_bgcolor="#EFE1BA", font=dict(color="#444339")),
+        style=chart_style
+    ),
 }
