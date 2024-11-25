@@ -3,11 +3,7 @@ import plotly.express as px
 from dash import html, dcc
 import hashlib as hl
 import numpy as np
-# !!! Remove Comment before Render
-# Används inte, ta bort?
-# [
-import dash_bootstrap_components as dbc
-# ]
+
 
 
 df = pd.read_csv("Data/athlete_events.csv")
@@ -41,9 +37,6 @@ olympic_years = sorted(olympic_years)
 
 hungary = df[df["NOC"] == "Hungary"].copy()
 
-# !!! Remove Comment before Render
-# This retruns None incase there is a missing name ???
-
 
 def hash_name(name):
     if (name == None):
@@ -51,19 +44,13 @@ def hash_name(name):
     return hl.sha256(name.encode()).hexdigest()
 
 
-# !!! Remove Comment before Render
-# Got rid of the error message:
-# 'A value is trying to be set on a copy of a slice from a DataFrame.'
-# by adding .loc
-# I think Tobbe fixed this with .copy, but maybe he didn't push it?
+
 df.loc[df.index, "Name"] = df["Name"].apply(hash_name)
 
 # Removes all athletes that didn't win a medal
 # Combines the Year Medal and Event in to a new column named Unique_Medal_Event
 # Removes all rows with the same Unique_Medal_Event value, except one
 # this way you're left with only one medal of each value per event.
-
-
 def medals_only(df):
     medals = df[df["Medal"].notnull()].copy()
     medals["Unique_Medal_Event"] = medals["Year"].astype(
@@ -75,13 +62,6 @@ def medals_only(df):
 
 unique_medals = medals_only(df)
 
-# !!! Remove Comment before Render
-# The Variable that accesses these function
-# are placed at row 92 and 93
-# It might be more clear if we put the variables next to
-# the functions
-# [
-
 
 def medal_distribution(unique_medals):
     return unique_medals.groupby("Medal").size().reset_index(name="Count")
@@ -90,40 +70,15 @@ def medal_distribution(unique_medals):
 def medals_per_year(unique_medals, country):
     filtered_data = unique_medals[unique_medals["NOC"] == country]
     return filtered_data.groupby(["Year", "Medal"]).size().reset_index(name="Count")
-# ]
 
 
-# !!! Remove Comment before Render
-# There are two of these and I believe neither of them is in use
-# [
-def select_sport(sport):
-    filtered = (df["Sport"] == sport) & (df["Medal"].notna())
-    return df[filtered].groupby("NOC")[["Medal"]].count().sort_values(by="Medal", ascending=False).reset_index()
-# ]
-
-# !!! Remove Comment before Render
-# Not in use, remove?
-# Could be usefull if one wants to make a line chart
-# This function gets over written att line 111
-# [
 
 
-def medals_ratio(df, noc):
-    df_noc = medals_only(df[df["NOC"] == noc])
-    df_all = medals_only(df)
-    ratio = pd.DataFrame()
-    ratio["Gold (%)"] = df_noc["Gold"] / df_all["Gold"] * 100
-    ratio["Silver (%)"] = df_noc["Silver"] / df_all["Silver"] * 100
-    ratio["Bronze (%)"] = df_noc["Bronze"] / df_all["Bronze"] * 100
-    return ratio
-# ]
 
 # Returns a DataFrame summing up all the medals the
 # countires have take year by year.
 # Argument noc : The countires you want be returned
 # Argument ratio : Set to true to conver the number of medals in to percentage.
-
-
 def get_medals_only(noc: list, ratio: bool = False):
     unique_medals = medals_only(df[df["Season"] == "Summer"])
     medals = pd.DataFrame(index=unique_medals["Year"])
@@ -169,17 +124,6 @@ df_mean_age = df_mean_age.unstack()
 df_mean_age["Water Polo"] = (
     df_mean_age["Water Polo"].bfill()+df_mean_age["Water Polo"].ffill())/2
 
-
-# !!! Remove Comment before Render
-# Not in Use? Remvoe
-# [
-def select_sport(selection_of_sport):
-    chosen_sport = (df["Sport"] == selection_of_sport) & (df["Medal"].notna())
-    # groups by NOC and counts number of medals, sort values and then resets index.
-    medals_by_country = (df[chosen_sport].groupby("NOC")[["Medal"]].count(
-    ).sort_values(by="Medal", ascending=False).reset_index())
-    return medals_by_country
-# ]
 
 
 def age_distribution(chosen_sports):
