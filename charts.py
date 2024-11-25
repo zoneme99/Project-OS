@@ -35,6 +35,10 @@ medal_colors = {
 }
 
 
+olympic_years = df["Year"].unique()
+olympic_years = sorted(olympic_years)
+
+
 hungary = df[df["NOC"] == "Hungary"].copy()
 
 # !!! Remove Comment before Render
@@ -282,7 +286,15 @@ select = {
             color="Medal",
             title="Medals for Hungary by Type per Year",
             color_discrete_map=medal_colors
-        ).update_layout(plot_bgcolor="#EFE1BA", paper_bgcolor="#EFE1BA", font=dict(color="#444339")),
+        ).update_layout(
+            plot_bgcolor="#EFE1BA",
+            paper_bgcolor="#EFE1BA",
+            font=dict(color="#444339"),
+            xaxis=dict(
+                tickvals=olympic_years,
+                title="Year"
+            )
+        ),
         style=chart_style
     ),
     "Medal Distribution": dcc.Graph(
@@ -302,7 +314,10 @@ select = {
             color_discrete_map={
                 "Hungary": "#3f8c37", "World": "#bcb092", "USA": "#c73434", "Sweden": "#37518c"},
             title="Percentage of Medals Won During Summer Games             Pop 2016 : USA 323m | Sweden 10m |  Hungary 10m ",
-        ).update_layout(yaxis_title="Medals (%)", plot_bgcolor="#EFE1BA", paper_bgcolor="#EFE1BA", font=dict(color="#444339")),
+        ).update_layout(yaxis_title="Medals (%)", plot_bgcolor="#EFE1BA", paper_bgcolor="#EFE1BA", font=dict(color="#444339"), xaxis=dict(
+            tickvals=olympic_years,
+            title="Year"
+        )),
         style=chart_style
     ),
     "Average Age": dcc.Graph(
