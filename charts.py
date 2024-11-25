@@ -232,9 +232,9 @@ select = {
                                 "-Worst Year in the olympics: 1896 and 1904 with 4 medals"),
                             html.P("-Inventor of the Rubik's Cube"),
                             html.P(
-                                "-Best water-polo team in history of the sport with 15 olympic medals"),
-                            html.P(
                                 "-Did not participate in 1920 and 1984 years Olympic summer games"),
+                            html.P(
+                                "-Best water-polo team in history of the sport with 15 olympic medals"),
                         ],
                         style={
                             "max-width": "400px",
