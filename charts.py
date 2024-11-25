@@ -1,9 +1,14 @@
 import pandas as pd
 import plotly.express as px
 from dash import html, dcc
-import dash_bootstrap_components as dbc
 import hashlib as hl
 import numpy as np
+# !!! Remove Comment before Render
+# Används inte, ta bort?
+# [
+import dash_bootstrap_components as dbc
+# ]
+
 
 
 df = pd.read_csv("Data/athlete_events.csv")
@@ -23,12 +28,14 @@ chart_style = {
     'margin': '10px'
 }
 
+# !!! Remove Comment before Render
 # This retruns None incase there is a missing name ???
 def hash_name(name):
     if (name == None):
         return None
     return hl.sha256(name.encode()).hexdigest()
 
+# !!! Remove Comment before Render
 # Got rid of the error message:
 # 'A value is trying to be set on a copy of a slice from a DataFrame.'
 # by adding .loc
@@ -48,6 +55,7 @@ def medals_only(df):
 
 unique_medals = medals_only(df)
 
+# !!! Remove Comment before Render
 # The Variable that accesses these function
 # are placed at row 92 and 93 
 # It might be more clear if we put the variables next to 
@@ -63,15 +71,18 @@ def medals_per_year(unique_medals, country):
 # ]
 
 
-# There are two of these 
-# I believe neither of them is in use 
+# !!! Remove Comment before Render
+# There are two of these and I believe neither of them is in use 
 # [
 def select_sport(sport):
     filtered = (df["Sport"] == sport) & (df["Medal"].notna())
     return df[filtered].groupby("NOC")[["Medal"]].count().sort_values(by="Medal", ascending=False).reset_index()
 # ]
 
-# Not in use?
+# !!! Remove Comment before Render
+# Not in use, remove?
+# Could be usefull if one wants to make a line chart 
+# This function gets over written att line 111
 # [
 def medals_ratio(df, noc):
     df_noc = medals_only(df[df["NOC"] == noc])
@@ -101,7 +112,7 @@ def get_medals_only(noc:list, ratio:bool=False):
 
 medals_ratio = get_medals_only(["Hungary","Sweden","USA"], True)
 
-
+# !!! Remove Comment before Render
 # connected to Top 10 Sports Where Hungary Won Medals
 # [
 hungary = df[df["NOC"] == "Hungary"]
@@ -117,8 +128,8 @@ top_sports = total_medals_by_sport.sort_values(
 hungary_medals_per_year = medals_per_year(unique_medals, "Hungary")
 hungary_medal_distribution = medal_distribution(unique_medals)
 
-# Maybe Already Exits
-# Connected to 'Top 10 Sports Where Hungary Won Medals'
+# !!! Remove Comment before Render
+# Adam... Clean this upp 
 # [
 df_sorted = df.sort_values("Year", ascending=False)
 df_age_by_year = pd.DataFrame()
@@ -131,7 +142,8 @@ df_age_by_year["Water Polo"] = (
     df_age_by_year["Water Polo"].bfill()+df_age_by_year["Water Polo"].ffill())/2
 # ]
 
-# Not in Use ?
+# !!! Remove Comment before Render
+# Not in Use? Remvoe
 # [ 
 def select_sport(selection_of_sport):
     chosen_sport = (df["Sport"] == selection_of_sport) & (df["Medal"].notna())

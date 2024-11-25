@@ -1,5 +1,8 @@
+# Används inte.. Tabort?
+# [
 import pandas as pd
 import plotly.express as px
+# ] 
 from dash import Dash, html, dcc, dash_table
 from dash.dependencies import Input, Output, State
 import dash_bootstrap_components as dbc
