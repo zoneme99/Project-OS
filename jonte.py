@@ -28,3 +28,8 @@ select={
         "Gold Fencing Men": dcc.Graph( figure=px.pie(values=Gold_Fencing_Men(), names=["Other Men", "Hungarian Men"], title="Gold medals in Fencing") ),
         "Medals per year": dcc.Graph( figure=px.line(Medals_year(), title="Medals per year") ),
 }
+
+def fencing_gold_by_noc():    
+    gold = df[(df['Medal'] == 'Gold') & (df['Sport'] == 'Fencing')].groupby('NOC')['Medal'].count()
+    gold = gold.sort_values(ascending=False)
+    return [*gold.iloc[0:3], gold.iloc[3:].sum()], ['Italy','France','Hungary', 'Other']

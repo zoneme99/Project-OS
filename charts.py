@@ -148,6 +148,11 @@ def age_distribution(chosen_sports):
 
     return filt_df
 
+def fencing_gold_by_noc():    
+    gold = df[(df['Medal'] == 'Gold') & (df['Sport'] == 'Fencing')].groupby('NOC')['Medal'].count()
+    gold = gold.sort_values(ascending=False)
+    return [*gold.iloc[0:3], gold.iloc[3:].sum()], ['Italy','France','Hungary', 'Other']
+
 
 select = {
     "Age distribution": dcc.Graph(
@@ -214,9 +219,8 @@ select = {
     ),
     "Gold Fencing Men": dcc.Graph(
         figure=px.pie(
-            values=[len(df[(df["Sex"] == "M") & (df["Sport"] == "Fencing") & (df["Medal"] == "Gold")]),
-                    len(df[(df["Sex"] == "M") & (df["Sport"] == "Fencing") & (df["Medal"] == "Gold") & (df["NOC"] == "Hungary")])],
-            names=["Other Men", "Hungarian Men"],
+            values=fencing_gold_by_noc()[0],
+            names=fencing_gold_by_noc()[1],
             title="Gold Medals in Fencing"
         ).update_layout(plot_bgcolor="#EFE1BA", paper_bgcolor="#EFE1BA", font=dict(color="#444339")),
         style=chart_style
