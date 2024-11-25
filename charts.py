@@ -225,7 +225,7 @@ select = {
                             html.P(
                                 "-Best Year in the olympics: 1952 with 43 medals"),
                             html.P(
-                                "-Worst Year in the olympics: 1896 with 4 medals"),
+                                "-Worst Year in the olympics: 1896 and 1904 with 4 medals"),
                             html.P("-Inventor of the Rubik's Cube"),
                             html.P(
                                 "-Best water-polo team in history of the sport with 15 olympic medals"),
