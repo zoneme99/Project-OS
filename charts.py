@@ -157,7 +157,8 @@ df_top_unique.sort_values("Medal", ascending=False, inplace=True)
 
 
 hungary_medals_per_year = medals_per_year(unique_medals, "Hungary")
-hungary_medal_distribution = medal_distribution(unique_medals[ unique_medals["NOC"] == "Hungary"]) 
+hungary_medal_distribution = medal_distribution(
+    unique_medals[unique_medals["NOC"] == "Hungary"])
 hungary_medal_distribution["Medal"] = hungary_medal_distribution["Medal"].str.strip(
 )
 
@@ -260,6 +261,14 @@ select = {
         ).update_layout(plot_bgcolor="#EFE1BA", paper_bgcolor="#EFE1BA", font=dict(color="#444339")),
         style=chart_style
     ),
+    "Gold Fencing Men": dcc.Graph(
+        figure=px.pie(
+            values=fencing_gold_by_noc()[0],
+            names=fencing_gold_by_noc()[1],
+            title="Gold Medals in Fencing"
+        ).update_layout(plot_bgcolor="#EFE1BA", paper_bgcolor="#EFE1BA", font=dict(color="#444339")),
+        style=chart_style
+    ),
     "Top 10 Sports Unique": dcc.Graph(
         figure=px.bar(
             df_top_unique.head(10),
@@ -267,14 +276,6 @@ select = {
             y="Medal",
             color="Sport",
             title="Top 10 Sports Where Hungary Won Medals (Counting only one medal per Team) ",
-        ).update_layout(plot_bgcolor="#EFE1BA", paper_bgcolor="#EFE1BA", font=dict(color="#444339")),
-        style=chart_style
-    ),
-    "Gold Fencing Men": dcc.Graph(
-        figure=px.pie(
-            values=fencing_gold_by_noc()[0],
-            names=fencing_gold_by_noc()[1],
-            title="Gold Medals in Fencing"
         ).update_layout(plot_bgcolor="#EFE1BA", paper_bgcolor="#EFE1BA", font=dict(color="#444339")),
         style=chart_style
     ),
@@ -329,7 +330,7 @@ select = {
         ).update_layout(yaxis_title="Age", plot_bgcolor="#EFE1BA", paper_bgcolor="#EFE1BA", font=dict(color="#444339")),
         style=chart_style
     ),
-    "Age distribution": dcc.Graph(
+    "Age Distribution": dcc.Graph(
         figure=px.box(
             age_distribution(["Fencing", "Water Polo", "Gymnastics"]),
             x="Sport",
