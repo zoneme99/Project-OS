@@ -255,9 +255,9 @@ select = {
                             html.P("-Population: 9.6 million inhabitants"),
                             html.P("-Weather: Cold winters and warm summers"),
                             html.P(
-                                "-Best Year in the olympics: 1952 with 102 medals"),
+                                "-Best Year in the olympics: 1952 with 42 medals"),
                             html.P(
-                                "-Worst Year in the olympics: 1904 with 4 medals"),
+                                "-Worst Year in the olympics: 1896 with 2 medals"),
                             html.P("-Inventor of the Rubik's Cube"),
                             html.P(
                                 "-Best water-polo team in history of the sport with 15 olympic medals"),
