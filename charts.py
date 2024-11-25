@@ -10,17 +10,16 @@ import dash_bootstrap_components as dbc
 # ]
 
 
-
 df = pd.read_csv("Data/athlete_events.csv")
 noc_regions = pd.read_csv("Data/noc_regions.csv")
 
-# Replaces the NOC style region names with propper names 
+# Replaces the NOC style region names with propper names
 # aka SWE becomes Sweden, HUN becomes Hungary.
 df = pd.merge(df, noc_regions[['NOC', 'region']], on='NOC', how='left')
 df['NOC'] = df['region']
 df.drop(columns=['region'], inplace=True)
 
-# We set the style elment in the dcc.Graph objects to 
+# We set the style elment in the dcc.Graph objects to
 # this to create a border around the charts.
 chart_style = {
     'border': '2px solid #444339',
@@ -28,14 +27,25 @@ chart_style = {
     'margin': '10px'
 }
 
+# Medaljfärger
+medal_colors = {
+    "Gold": "#FFD700",
+    "Silver": "#C0C0C0",
+    "Bronze": "#CD7F32"
+}
+
+
 hungary = df[df["NOC"] == "Hungary"].copy()
 
 # !!! Remove Comment before Render
 # This retruns None incase there is a missing name ???
+
+
 def hash_name(name):
     if (name == None):
         return None
     return hl.sha256(name.encode()).hexdigest()
+
 
 # !!! Remove Comment before Render
 # Got rid of the error message:
@@ -46,23 +56,29 @@ df.loc[df.index, "Name"] = df["Name"].apply(hash_name)
 
 # Removes all athletes that didn't win a medal
 # Combines the Year Medal and Event in to a new column named Unique_Medal_Event
-# Removes all rows with the same Unique_Medal_Event value, except one 
+# Removes all rows with the same Unique_Medal_Event value, except one
 # this way you're left with only one medal of each value per event.
+
+
 def medals_only(df):
     medals = df[df["Medal"].notnull()].copy()
-    medals["Unique_Medal_Event"] = medals["Year"].astype(str) + "_" + medals["Event"] + "_" + medals["Medal"]
+    medals["Unique_Medal_Event"] = medals["Year"].astype(
+        str) + "_" + medals["Event"] + "_" + medals["Medal"]
     medals.drop_duplicates(subset=["Unique_Medal_Event"], inplace=True)
     medals.drop(columns=["Unique_Medal_Event"], inplace=True)
     return medals
+
 
 unique_medals = medals_only(df)
 
 # !!! Remove Comment before Render
 # The Variable that accesses these function
-# are placed at row 92 and 93 
-# It might be more clear if we put the variables next to 
+# are placed at row 92 and 93
+# It might be more clear if we put the variables next to
 # the functions
 # [
+
+
 def medal_distribution(unique_medals):
     return unique_medals.groupby("Medal").size().reset_index(name="Count")
 
@@ -74,7 +90,7 @@ def medals_per_year(unique_medals, country):
 
 
 # !!! Remove Comment before Render
-# There are two of these and I believe neither of them is in use 
+# There are two of these and I believe neither of them is in use
 # [
 def select_sport(sport):
     filtered = (df["Sport"] == sport) & (df["Medal"].notna())
@@ -83,9 +99,11 @@ def select_sport(sport):
 
 # !!! Remove Comment before Render
 # Not in use, remove?
-# Could be usefull if one wants to make a line chart 
+# Could be usefull if one wants to make a line chart
 # This function gets over written att line 111
 # [
+
+
 def medals_ratio(df, noc):
     df_noc = medals_only(df[df["NOC"] == noc])
     df_all = medals_only(df)
@@ -94,25 +112,30 @@ def medals_ratio(df, noc):
     ratio["Silver (%)"] = df_noc["Silver"] / df_all["Silver"] * 100
     ratio["Bronze (%)"] = df_noc["Bronze"] / df_all["Bronze"] * 100
     return ratio
-# ] 
+# ]
 
-# Returns a DataFrame summing up all the medals the 
+# Returns a DataFrame summing up all the medals the
 # countires have take year by year.
 # Argument noc : The countires you want be returned
 # Argument ratio : Set to true to conver the number of medals in to percentage.
-def get_medals_only(noc:list, ratio:bool=False):
-    unique_medals = medals_only(df[ df["Season"]=="Summer" ])
-    medals = pd.DataFrame( index=unique_medals["Year"] )
-    medals = unique_medals[ unique_medals["NOC"].isin(noc) ].groupby(["Year","NOC"]).size().unstack().copy()
-    medals["World"] = unique_medals.groupby("Year")["Medal"].size()-medals.apply(np.sum, axis=1)
-    if ratio: 
+
+
+def get_medals_only(noc: list, ratio: bool = False):
+    unique_medals = medals_only(df[df["Season"] == "Summer"])
+    medals = pd.DataFrame(index=unique_medals["Year"])
+    medals = unique_medals[unique_medals["NOC"].isin(noc)].groupby(
+        ["Year", "NOC"]).size().unstack().copy()
+    medals["World"] = unique_medals.groupby(
+        "Year")["Medal"].size()-medals.apply(np.sum, axis=1)
+    if ratio:
         medals["Total"] = medals.apply(np.sum, axis=1)
         for _ in noc+["World"]:
-            medals[_] =  (medals[_]*100)/medals["Total"]
-        medals.drop( columns=["Total"], inplace=True)
+            medals[_] = (medals[_]*100)/medals["Total"]
+        medals.drop(columns=["Total"], inplace=True)
     return medals
 
-medals_ratio = get_medals_only(["Hungary","Sweden","USA"], True)
+
+medals_ratio = get_medals_only(["Hungary", "Sweden", "USA"], True)
 
 
 hungary = df[df["NOC"] == "Hungary"]
@@ -124,22 +147,27 @@ total_medals_by_sport = medals.groupby(
 top_sports = total_medals_by_sport.sort_values(
     by="Count", ascending=False).head(10)
 
-df_top_unique = unique_medals[ unique_medals["NOC"]=="Hungary" ].groupby("Sport", as_index=False)["Medal"].count()
+df_top_unique = unique_medals[unique_medals["NOC"] == "Hungary"].groupby(
+    "Sport", as_index=False)["Medal"].count()
 df_top_unique.sort_values("Medal", ascending=False, inplace=True)
 
 
 hungary_medals_per_year = medals_per_year(unique_medals, "Hungary")
 hungary_medal_distribution = medal_distribution(unique_medals)
+hungary_medal_distribution["Medal"] = hungary_medal_distribution["Medal"].str.strip(
+)
 
 
-df_mean_age = df[ (df["Sport"] == "Water Polo") |  (df["Sport"] == "Gymnastics") | (df["Sport"] == "Fencing")].groupby(["Year","Sport"])["Age"].mean()
+df_mean_age = df[(df["Sport"] == "Water Polo") | (df["Sport"] == "Gymnastics") | (
+    df["Sport"] == "Fencing")].groupby(["Year", "Sport"])["Age"].mean()
 df_mean_age = df_mean_age.unstack()
-df_mean_age["Water Polo"] = (df_mean_age["Water Polo"].bfill()+df_mean_age["Water Polo"].ffill())/2
+df_mean_age["Water Polo"] = (
+    df_mean_age["Water Polo"].bfill()+df_mean_age["Water Polo"].ffill())/2
 
 
 # !!! Remove Comment before Render
 # Not in Use? Remvoe
-# [ 
+# [
 def select_sport(selection_of_sport):
     chosen_sport = (df["Sport"] == selection_of_sport) & (df["Medal"].notna())
     # groups by NOC and counts number of medals, sort values and then resets index.
@@ -148,29 +176,31 @@ def select_sport(selection_of_sport):
     return medals_by_country
 # ]
 
+
 def age_distribution(chosen_sports):
     filt_df = df[df["Sport"].isin(chosen_sports)]
 
     return filt_df
 
-def fencing_gold_by_noc():    
-    gold = df[(df['Medal'] == 'Gold') & (df['Sport'] == 'Fencing')].groupby('NOC')['Medal'].count()
+
+def fencing_gold_by_noc():
+    gold = df[(df['Medal'] == 'Gold') & (df['Sport'] == 'Fencing')
+              ].groupby('NOC')['Medal'].count()
     gold = gold.sort_values(ascending=False)
-    return [*gold.iloc[0:3], gold.iloc[3:].sum()], ['Italy','France','Hungary', 'Other']
+    return [*gold.iloc[0:3], gold.iloc[3:].sum()], ['Italy', 'France', 'Hungary', 'Other']
 
 
 select = {
     "Age distribution": dcc.Graph(
-        figure=px.box(age_distribution(["Fencing", "Water Polo", "Gymnastics"]),
-                      x="Sport",
-                      y="Age",
-                      color="Medal",
-                      title="Age distribution in Fencing, Water Polo, and Gymnastics",
-                      color_discrete_map={"Gold": "#FFD700",
-                                          "Silver": "#C0C0C0", "Bronze": "#CD7F32"}
-                      ).update_layout(plot_bgcolor="#EFE1BA", paper_bgcolor="#EFE1BA", font=dict(color="#444339")),
+        figure=px.box(
+            age_distribution(["Fencing", "Water Polo", "Gymnastics"]),
+            x="Sport",
+            y="Age",
+            color="Medal",
+            title="Age distribution in Fencing, Water Polo, and Gymnastics",
+            color_discrete_map=medal_colors
+        ).update_layout(plot_bgcolor="#EFE1BA", paper_bgcolor="#EFE1BA", font=dict(color="#444339")),
         style=chart_style
-
     ),
     "Medal Distribution": dcc.Graph(
         figure=px.pie(
@@ -178,8 +208,8 @@ select = {
             names="Medal",
             values="Count",
             title="Medal Distribution for Hungary",
-            color_discrete_map={"Gold": "#FFD700",
-                                "Silver": "#C0C0C0", "Bronze": "#CD7F32"}
+            color="Medal",
+            color_discrete_map=medal_colors
         ).update_layout(plot_bgcolor="#EFE1BA", paper_bgcolor="#EFE1BA", font=dict(color="#444339")),
         style=chart_style
     ),
@@ -199,17 +229,17 @@ select = {
             y="Count",
             color="Medal",
             title="Medals for Hungary by Type per Year",
-            color_discrete_map={"Gold": "#FFD700",
-                                "Silver": "#C0C0C0", "Bronze": "#CD7F32"}
+            color_discrete_map=medal_colors
         ).update_layout(plot_bgcolor="#EFE1BA", paper_bgcolor="#EFE1BA", font=dict(color="#444339")),
         style=chart_style
     ),
     "Percentage of Medals": dcc.Graph(
-        figure = px.bar(
-            medals_ratio, 
-            color_discrete_map={"Hungary": "#3f8c37", "World": "#bcb092","USA":"#c73434", "Sweden":"#37518c" },
+        figure=px.bar(
+            medals_ratio,
+            color_discrete_map={
+                "Hungary": "#3f8c37", "World": "#bcb092", "USA": "#c73434", "Sweden": "#37518c"},
             title="Percentage of Medals Won During Summer Games             Pop 2016 : USA 323m | Sweden 10m |  Hungary 10m ",
-        ).update_layout( yaxis_title="Medals (%)", plot_bgcolor="#EFE1BA",paper_bgcolor="#EFE1BA", font=dict(color="#444339")),
+        ).update_layout(yaxis_title="Medals (%)", plot_bgcolor="#EFE1BA", paper_bgcolor="#EFE1BA", font=dict(color="#444339")),
         style=chart_style
     ),
     "Top 10 Sports": dcc.Graph(
